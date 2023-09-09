@@ -1,6 +1,10 @@
 name: "meal-planner"
 services:
 
+  api:
+    build: ./api
+    profiles:
+      - service
   db:
     image: postgres:15
     env_file: .env
@@ -11,6 +15,7 @@ services:
     profiles:
       - db
       - liquibase
+      - service
     ports:
       - "5432:5432"
     volumes:

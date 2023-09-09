@@ -1,0 +1,31 @@
+name: "meal-planner"
+services:
+
+  db:
+    image: postgres:15
+    env_file: .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USERNAME}
+    profiles:
+      - db
+      - liquibase
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  liquibase:
+    image: liquibase/liquibase:4.23
+    entrypoint: ["liquibase", "--defaultsFile=liquibase.properties"]
+    command: ["update"]
+    profiles:
+      - liquibase
+    volumes:
+      - type: bind
+        source: ./liquibase/liquibase.properties
+        target: /liquibase/liquibase.properties
+      - ./liquibase/changelog:/liquibase/changelog
+
+volumes:
+  db-data:

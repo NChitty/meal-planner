@@ -1,6 +1,6 @@
-[submodule "infrastructure"]
-	path = infrastructure
-	url = ./infrastructure
 [submodule "api"]
 	path = api
-	url = ./api
+	url = git@github.com:NChitty/mp-api
+[submodule "infrastructure"]
+	path = infrastructure
+	url = git@github.com:NChitty/mp-infrastructure

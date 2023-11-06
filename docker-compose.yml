@@ -1,10 +1,32 @@
 name: "meal-planner"
 services:
-
-  api:
-    build: ./api
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
     profiles:
       - service
+    volumes:
+      - ./ssl:/etc/nginx/certs
+      - ./nginx/proxy.conf:/etc/nginx/proxy.conf
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  api:
+    build: 
+      context: ./api
+      target: development
+    env_file: .env
+    environment:
+      - VIRTUAL_HOST=api.mealplanner.test
+      - VIRTUAL_PORT=8080
+      - VIRTUAL_PROTO=http
+    expose:
+      - 8080
+    profiles:
+      - service
+    volumes:
+      - ./api:/usr/src/app
+
   db:
     image: postgres:15
     env_file: .env
@@ -20,6 +42,7 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+
   liquibase:
     image: liquibase/liquibase:4.23
     entrypoint: ["liquibase", "--defaultsFile=liquibase.properties"]

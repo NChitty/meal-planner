@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
   api:
-    build: 
+    build:
       context: ./api
       target: development
     env_file: .env

@@ -14,7 +14,7 @@ services:
   api:
     build:
       context: ./api
-      target: development
+      target: meal-planner-api-development
     env_file: .env
     environment:
       - VIRTUAL_HOST=api.mealplanner.test

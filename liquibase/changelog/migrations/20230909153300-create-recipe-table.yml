@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: "20230909153400"
+      author: "NChitty"
+      changes:
+        - createTable:
+            tableName: recipe
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

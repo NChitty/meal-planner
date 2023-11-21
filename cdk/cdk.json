@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/infrastructure.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/meal-planner.ts",
   "watch": {
     "include": [
       "**"
@@ -17,6 +17,7 @@
     ]
   },
   "context": {
+    "mealPlannerEcrArn": "arn:aws:ecr:us-east-1:416327764979:repository/meal-planner-api",
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
     "@aws-cdk/core:target-partitions": [

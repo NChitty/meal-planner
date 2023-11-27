@@ -1,5 +1,7 @@
 use lambda_http::{run, service_fn, Body, Error, Request, RequestExt, Response};
 
+mod recipe;
+
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let path = event.raw_http_path();
     let who = event

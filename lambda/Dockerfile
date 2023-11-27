@@ -12,6 +12,6 @@ RUN cargo lambda build -r -l /tmp
 
 FROM public.ecr.aws/lambda/provided:al2 as meal-planner-api
 
-COPY --from=meal-planner-api-build /tmp/api/bootstrap ${LAMBDA_RUNTIME_DIR}
+COPY --from=meal-planner-api-build /tmp/lambda/bootstrap ${LAMBDA_RUNTIME_DIR}
 
 CMD [ "bootstrap" ]

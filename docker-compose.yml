@@ -2,13 +2,12 @@ name: "meal-planner"
 
 services:
   nginx-proxy:
-    image: jwilder/nginx-proxy
+    image: nginxproxy/nginx-proxy:alpine
     ports:
-      - "443:443"
+      - "80:80"
     profiles:
       - service
     volumes:
-      - ./ssl:/etc/nginx/certs
       - ./nginx/proxy.conf:/etc/nginx/proxy.conf
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
@@ -20,13 +19,12 @@ services:
     environment:
       - VIRTUAL_HOST=api.mealplanner.test
       - VIRTUAL_PORT=8080
-      - VIRTUAL_PROTO=http
     expose:
       - 8080
     profiles:
       - service
     volumes:
-      - ./api:/usr/src/app
+      - ./lambda:/usr/src/app
 
   db:
     image: postgres:15

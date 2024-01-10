@@ -5,7 +5,6 @@ use axum::Router;
 use lambda_http::{run, Error};
 use serde::Deserialize;
 use serde_json::{json, Value};
-use std::collections::HashMap;
 
 mod recipe;
 

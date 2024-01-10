@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
-use uuid::{uuid, Uuid};
-
-mod repository;
+use uuid::Uuid;
 
 #[derive(Deserialize, Serialize)]
 pub struct Recipe {

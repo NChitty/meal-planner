@@ -7,7 +7,7 @@ on:
 jobs:
   format:
     if: ${{ github.event_name == 'pull_request' }}
-    name: "Format"
+    name: "Rust Format"
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -23,7 +23,7 @@ jobs:
           mode: review
 
   clippy:
-    name: "Lint"
+    name: "Rust Lint"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
           clippy_flags: "-- -W clippy::pedantic"
 
   tests:
-    name: "Tests"
+    name: "Rust Tests"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -48,7 +48,10 @@ jobs:
         with:
           components: clippy
       - name: Tests
-        run: cargo test
+        run: |
+          cd cdk
+          cargo test
+
   build:
     runs-on: ubuntu-latest
     steps:

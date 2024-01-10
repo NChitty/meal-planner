@@ -16,8 +16,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@nightly
         with:
           components: rustfmt
-      - run: cd lambda
       - uses: mbrobbel/rustfmt-check@master
+        working-directory: lambda
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           mode: review
@@ -48,9 +48,8 @@ jobs:
         with:
           components: clippy
       - name: Tests
-        run: |
-          cd cdk
-          cargo test
+        working-directory: lambda
+        run: cargo test
 
   build:
     runs-on: ubuntu-latest

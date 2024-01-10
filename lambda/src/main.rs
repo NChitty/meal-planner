@@ -1,11 +1,11 @@
-use std::collections::HashMap;
-use axum::{Router};
-use axum::extract::{Query};
-use axum::response::{Json};
+use axum::extract::Query;
+use axum::response::Json;
 use axum::routing::get;
+use axum::Router;
 use lambda_http::{run, Error};
 use serde::Deserialize;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
+use std::collections::HashMap;
 
 mod recipe;
 
@@ -16,7 +16,7 @@ struct Root {
 
 async fn root(query: Option<Query<Root>>) -> Json<Value> {
     if let Some(query) = query {
-        return Json(json!({ "msg": "Hello ".to_string() + &query.0.name + "!" }))
+        return Json(json!({ "msg": "Hello ".to_string() + &query.0.name + "!" }));
     }
     Json(json!({ "msg": "Hello world!" }))
 }

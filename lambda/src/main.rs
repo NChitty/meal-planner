@@ -20,9 +20,7 @@ async fn root(query: Option<Query<Root>>) -> Json<Value> {
     Json(json!({ "msg": "Hello world!" }))
 }
 
-async fn ping() -> Json<Value> {
-    Json(json!({ "msg": "Pong" }))
-}
+async fn ping() -> Json<Value> { Json(json!({ "msg": "Pong" })) }
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {

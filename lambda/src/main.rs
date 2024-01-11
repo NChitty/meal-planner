@@ -1,35 +1,26 @@
-use lambda_http::{run, service_fn, Body, Error, Request, RequestExt, Response};
+use axum::extract::Query;
+use axum::response::Json;
+use axum::routing::get;
+use axum::Router;
+use lambda_http::{run, Error};
+use serde::Deserialize;
+use serde_json::{json, Value};
 
 mod recipe;
 
-async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
-    let path = event.raw_http_path();
-    let who = event
-        .query_string_parameters_ref()
-        .and_then(|params| params.first("name"))
-        .unwrap_or("world");
-
-    println!("Path: {path}");
-    if path.contains("/ping") {
-        let message = "Pong";
-        let resp = Response::builder()
-            .status(200)
-            .header("content-type", "application/json")
-            .body(message.into())
-            .map_err(Box::new)?;
-        return Ok(resp);
-    }
-
-    let message = format!("Hello {who}");
-
-    let resp = Response::builder()
-        .status(200)
-        .header("content-type", "text/html")
-        .body(message.into())
-        .map_err(Box::new)?;
-
-    Ok(resp)
+#[derive(Debug, Deserialize)]
+struct Root {
+    name: String,
 }
+
+async fn root(query: Option<Query<Root>>) -> Json<Value> {
+    if let Some(query) = query {
+        return Json(json!({ "msg": "Hello ".to_string() + &query.0.name + "!" }));
+    }
+    Json(json!({ "msg": "Hello world!" }))
+}
+
+async fn ping() -> Json<Value> { Json(json!({ "msg": "Pong" })) }
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -39,5 +30,9 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .init();
 
-    run(service_fn(function_handler)).await
+    let app = Router::new()
+        .route("/", get(root))
+        .route("/ping", get(ping));
+
+    run(app).await
 }

@@ -1,27 +1,65 @@
 name: Checks
 on:
+  push:
+    branches: [main]
   pull_request:
-    branches:
-      - main
+
 jobs:
+  format:
+    if: ${{ github.event_name == 'pull_request' }}
+    name: "Rust Format"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+      - uses: mbrobbel/rustfmt-check@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --manifest-path lambda/Cargo.toml
+          mode: review
+
   clippy:
+    name: "Rust Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: clippy
+      - uses: giraffate/clippy-action@v1
+        name: Clippy
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: 'github-pr-review'
+          filter_mode: diff_context
+          workdir: lambda
+          clippy_flags: "-- -W clippy::pedantic"
+
+  tests:
+    name: "Rust Tests"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - uses: giraffate/clippy-action@v1
-        with:
-          reporter: 'github-pr-review'
-          filter_mode: diff_context
-        name: Clippy
+      - name: Tests
+        working-directory: lambda
+        run: cargo test
 
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Install modules
-        run: npm install
+        run: |
+          cd cdk
+          npm install
       - name: Run ESLint
-        run: npx eslint . --ext .js,.jsx,.ts,.tsx
+        run: |
+          cd cdk
+          npx eslint . --ext .js,.jsx,.ts,.tsx

@@ -16,9 +16,8 @@ pub async fn recipes() -> Router {
     let db_host = std::env::var("DB_HOST").unwrap_or_else(|_| "db".to_string());
     let db_port = std::env::var("DB_PORT").unwrap_or_else(|_| "5432".to_string());
     let db_name = std::env::var("DB_NAME").unwrap_or_else(|_| "meal-planner".to_string());
-    let db_connection_str = format!(
-        "postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
-    );
+    let db_connection_str =
+        format!("postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}");
 
     let recipe_context = ApplicationContext {
         repo: PostgresRecipeRepository::new(&db_connection_str).await,

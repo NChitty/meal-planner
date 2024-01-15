@@ -2,11 +2,10 @@ use axum::extract::Query;
 use axum::response::Json;
 use axum::routing::get;
 use axum::Router;
+use lambda::services;
 use lambda_http::{run, Error};
 use serde::Deserialize;
 use serde_json::{json, Value};
-use lambda::services;
-
 
 #[derive(Debug, Deserialize)]
 struct Root {

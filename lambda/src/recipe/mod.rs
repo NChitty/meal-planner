@@ -6,3 +6,12 @@ pub struct Recipe {
     id: Uuid,
     name: String,
 }
+
+impl Default for Recipe {
+    fn default() -> Self {
+        Self {
+            id: Uuid::nil(),
+            name: "Basic Recipe".to_owned(),
+        }
+    }
+}

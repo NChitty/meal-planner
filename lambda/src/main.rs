@@ -2,11 +2,10 @@ use axum::extract::Query;
 use axum::response::Json;
 use axum::routing::get;
 use axum::Router;
+use lambda::services;
 use lambda_http::{run, Error};
 use serde::Deserialize;
 use serde_json::{json, Value};
-
-mod recipe;
 
 #[derive(Debug, Deserialize)]
 struct Root {
@@ -30,9 +29,11 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .init();
 
+    let recipe_service = services::recipes().await;
     let app = Router::new()
         .route("/", get(root))
-        .route("/ping", get(ping));
+        .route("/ping", get(ping))
+        .nest("/recipes", recipe_service);
 
     run(app).await
 }

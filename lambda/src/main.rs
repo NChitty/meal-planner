@@ -30,10 +30,11 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .init();
 
+    let recipe_service = services::recipes().await;
     let app = Router::new()
         .route("/", get(root))
         .route("/ping", get(ping))
-        .nest("/recipes", services::recipes());
+        .nest("/recipes", recipe_service);
 
     run(app).await
 }

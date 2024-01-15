@@ -4,7 +4,7 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::Json;
 use sqlx::postgres::PgPoolOptions;
-use sqlx::{Error, PgPool, Postgres};
+use sqlx::{Error, PgPool};
 use uuid::Uuid;
 
 use crate::recipe::Recipe;
@@ -20,7 +20,7 @@ pub(super) struct PostgresRecipeRepository {
 }
 
 impl PostgresRecipeRepository {
-    pub(super) async fn new(url: &str) -> Self {
+    pub(super) async fn new(url: &String) -> Self {
         let pool: PgPool = PgPoolOptions::new()
             .max_connections(5)
             .acquire_timeout(Duration::from_secs(3))

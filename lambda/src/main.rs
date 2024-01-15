@@ -5,8 +5,8 @@ use axum::Router;
 use lambda_http::{run, Error};
 use serde::Deserialize;
 use serde_json::{json, Value};
+use lambda::services;
 
-mod services;
 
 #[derive(Debug, Deserialize)]
 struct Root {
@@ -33,7 +33,7 @@ async fn main() -> Result<(), Error> {
     let app = Router::new()
         .route("/", get(root))
         .route("/ping", get(ping))
-        .route("/recipes/:id", get(services::recipes::read_one));
+        .nest("/recipes", services::recipes());
 
     run(app).await
 }

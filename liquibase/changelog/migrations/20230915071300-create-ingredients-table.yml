@@ -9,7 +9,6 @@ databaseChangeLog:
               - column:
                   name: id
                   type: uuid
-                  defaultValueComputed: ${uuid_function}
                   constraints:
                     primaryKey: true
               - column:

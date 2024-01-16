@@ -1,0 +1,96 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $SCRIPT_DIR/utilities
+
+main() {
+  case "$1" in
+    u | up)
+      up $2
+      ;;
+    d | down)
+      down $2
+      ;;
+    -h | --help)
+      help
+      ;;
+    *)
+      printMsg "Invalid service collection: $1"
+      help
+      ;;
+  esac
+}
+
+up() {
+  local label='all'
+  up-msg $label $1
+  docker-compose up $1 nginx-proxy lambda db
+}
+
+down() {
+  local label='all'
+  printMsg "-- Bringing down $label services..."
+  docker-compose down
+}
+
+compose-services() {
+  local label=$1
+  local detached=""
+  local services=""
+
+  # The "detached" flag and the list of services sort of
+  # get lumped together as arguments, so this is a
+  # "best bad attempt" at solving it for now
+  if [[ $2 == '-d' ]]; then
+    detached=$2
+    services="${@:3}"
+  else
+    services="${@:2}"
+  fi
+
+  up-msg "$label" $detached
+  docker-compose up $detached $services
+}
+
+up-msg() {
+  local insertion=""
+  if [[ $2 == '-d' ]]; then
+    insertion=" in detached mode"
+  fi
+  printMsg "-- Starting up $1 services$insertion..."
+}
+
+help() {
+  cat <<TEXT
+
+    SYNOPSIS
+      services [collection] [-d]
+
+    OPTIONS
+      -d
+        Detached mode, run containers in the background
+
+    COLLECTIONS
+      u, up
+        Brings up all containers
+
+      d, down
+        Brings down all containers
+
+    EXAMPLES
+      bin/services down
+        Brings down all containers
+
+      bin/services up
+        Brings up all containers
+
+      bin/services up -d
+        Brings up all containers in detached mode
+
+TEXT
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi

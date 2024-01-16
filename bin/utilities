@@ -1,0 +1,9 @@
+#!/bin/bash
+
+printMsg() {
+  local RED='\033[0;31m'
+  local CLEAR='\033[0m'
+  echo -e "\n${RED}$1${CLEAR}\n"
+}
+
+export -f printMsg

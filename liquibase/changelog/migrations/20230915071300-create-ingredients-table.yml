@@ -1,14 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: "20230909153400"
+      id: "20230915071300"
       author: "NChitty"
       changes:
         - createTable:
-            tableName: recipe
+            tableName: ingredients
             columns:
               - column:
                   name: id
                   type: uuid
+                  defaultValueComputed: ${uuid_function}
                   constraints:
                     primaryKey: true
               - column:

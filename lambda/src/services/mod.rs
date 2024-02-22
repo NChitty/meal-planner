@@ -1,6 +1,7 @@
 use axum::routing::get;
 use axum::Router;
 
+use crate::credentials_provider::{self, DatabaseCredentials};
 use crate::services::recipes::PostgresRecipeRepository;
 
 mod recipes;
@@ -11,16 +12,10 @@ struct ApplicationContext<T> {
 }
 
 pub async fn recipes() -> Router {
-    let db_username = std::env::var("DB_USERNAME").unwrap_or_else(|_| "postgres".to_string());
-    let db_password = std::env::var("DB_PASSWORD").unwrap_or_else(|_| "password1234".to_string());
-    let db_host = std::env::var("DB_HOST").unwrap_or_else(|_| "db".to_string());
-    let db_port = std::env::var("DB_PORT").unwrap_or_else(|_| "5432".to_string());
-    let db_name = std::env::var("DB_NAME").unwrap_or_else(|_| "meal-planner".to_string());
-    let db_connection_str =
-        format!("postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}");
+    let db_credentials: DatabaseCredentials = credentials_provider::get_credentials();
 
     let recipe_context = ApplicationContext {
-        repo: PostgresRecipeRepository::new(&db_connection_str).await,
+        repo: PostgresRecipeRepository::new(&db_credentials.get_connection_string()).await,
     };
 
     Router::new()

@@ -7,7 +7,6 @@ import {
   InstanceSize,
   InstanceType,
   Port,
-  Peer,
   PrivateSubnet,
   SecurityGroup,
   Vpc,

@@ -18,13 +18,18 @@ pub struct DatabaseCredentials {
 impl DatabaseCredentials {
     pub fn get_connection_string(&self) -> String {
         format!(
-            "postgresql://{self.username}:{self.password}@{self.host}:{self.port}/{self.database}"
+            "postgresql://{}:{}@{}:{}/{}",
+            self.username.as_ref().unwrap(),
+            self.password.as_ref().unwrap(),
+            self.host.as_ref().unwrap(),
+            self.port.as_ref().unwrap(),
+            self.database.as_ref().unwrap(),
         )
     }
 }
 
 pub trait DatabaseCredentialsProvider {
-    fn execute(&mut self, credentials: &mut DatabaseCredentials) {
+    fn execute(&self, credentials: &mut DatabaseCredentials) {
         if credentials.database.is_none() {
             self.provide_database(credentials);
         }
@@ -50,23 +55,21 @@ pub trait DatabaseCredentialsProvider {
         }
     }
 
-    fn provide_database(&mut self, credentials: &mut DatabaseCredentials) {
+    fn provide_database(&self, credentials: &mut DatabaseCredentials) {
         credentials.database = None;
     }
 
-    fn provide_host(&mut self, credentials: &mut DatabaseCredentials) { credentials.host = None; }
+    fn provide_host(&self, credentials: &mut DatabaseCredentials) { credentials.host = None; }
 
-    fn provide_password(&mut self, credentials: &mut DatabaseCredentials) {
-        credentials.port = None;
-    }
+    fn provide_password(&self, credentials: &mut DatabaseCredentials) { credentials.port = None; }
 
-    fn provide_port(&mut self, credentials: &mut DatabaseCredentials) { credentials.port = None; }
+    fn provide_port(&self, credentials: &mut DatabaseCredentials) { credentials.port = None; }
 
-    fn provide_username(&mut self, credentials: &mut DatabaseCredentials) {
+    fn provide_username(&self, credentials: &mut DatabaseCredentials) {
         credentials.username = None;
     }
 
-    fn next(&mut self) -> &mut Option<Box<dyn DatabaseCredentialsProvider>>;
+    fn next(&self) -> &Option<Box<dyn DatabaseCredentialsProvider>>;
 }
 
 pub(self) fn into_next(
@@ -75,10 +78,11 @@ pub(self) fn into_next(
     Some(Box::new(credentials_provider))
 }
 
-pub fn get_credentials() -> DatabaseCredentials {
+pub async fn get_credentials() -> DatabaseCredentials {
     let defaults_provider = DefaultsCredentialsProvider::default();
     let environment_provider = EnvironmentCredentialsProvider::new(defaults_provider);
-    let mut secrets_manager_provider = SecretsManagerCredentialsProvider::new(environment_provider);
+    let secrets_manager_provider =
+        SecretsManagerCredentialsProvider::new(environment_provider).await;
 
     let mut credentials = DatabaseCredentials::default();
 

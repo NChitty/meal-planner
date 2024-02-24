@@ -12,7 +12,7 @@ struct ApplicationContext<T> {
 }
 
 pub async fn recipes() -> Router {
-    let db_credentials: DatabaseCredentials = credentials_provider::get_credentials();
+    let db_credentials: DatabaseCredentials = credentials_provider::get_credentials().await;
 
     let recipe_context = ApplicationContext {
         repo: PostgresRecipeRepository::new(&db_credentials.get_connection_string()).await,

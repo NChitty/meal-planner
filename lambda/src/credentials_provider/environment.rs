@@ -13,25 +13,25 @@ impl EnvironmentCredentialsProvider {
 }
 
 impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
-    fn next(&mut self) -> &mut Option<Box<dyn DatabaseCredentialsProvider>> { &mut self.next }
+    fn next(&self) -> &Option<Box<dyn DatabaseCredentialsProvider>> { &self.next }
 
-    fn provide_database(&mut self, credentials: &mut DatabaseCredentials) {
+    fn provide_database(&self, credentials: &mut DatabaseCredentials) {
         credentials.database = std::env::var("DB_NAME").ok();
     }
 
-    fn provide_host(&mut self, credentials: &mut DatabaseCredentials) {
+    fn provide_host(&self, credentials: &mut DatabaseCredentials) {
         credentials.host = std::env::var("DB_HOST").ok();
     }
 
-    fn provide_password(&mut self, credentials: &mut DatabaseCredentials) {
+    fn provide_password(&self, credentials: &mut DatabaseCredentials) {
         credentials.password = std::env::var("DB_PASSWORD").ok();
     }
 
-    fn provide_port(&mut self, credentials: &mut DatabaseCredentials) {
+    fn provide_port(&self, credentials: &mut DatabaseCredentials) {
         credentials.port = std::env::var("DB_PORT").ok();
     }
 
-    fn provide_username(&mut self, credentials: &mut DatabaseCredentials) {
+    fn provide_username(&self, credentials: &mut DatabaseCredentials) {
         credentials.username = std::env::var("DB_USERNAME").ok();
     }
 }

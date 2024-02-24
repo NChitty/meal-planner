@@ -1,6 +1,5 @@
 use std::future::Future;
 
-use sqlx::database;
 use uuid::Uuid;
 
 pub mod recipe;

@@ -1,4 +1,4 @@
-FROM ghcr.io/cargo-lambda/cargo-lambda:0.22.0 as cargo-lambda-user
+FROM ghcr.io/cargo-lambda/cargo-lambda:1.1.0 as cargo-lambda-user
 
 RUN groupadd -r -g 1000 appuser
 RUN useradd -r -u 1000 -g appuser appuser

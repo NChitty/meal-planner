@@ -21,7 +21,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
     #[instrument(name = "environment", skip_all)]
     fn provide_database(&self, credentials: &mut DatabaseCredentials) {
         credentials.database = std::env::var("DB_NAME").ok();
-        match credentials.database { 
+        match credentials.database {
             Some(_) => event!(Level::INFO, "Providing database name"),
             None => ()
         }

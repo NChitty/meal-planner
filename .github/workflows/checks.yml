@@ -54,18 +54,14 @@ jobs:
   eslint:
     name: "CDK Lint"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
+      - uses: reviewdog/action-eslint@v1
         with:
-          node-version: 20
-      - run: |
-          cd cdk
-          npm ci
-      - uses: sibiraj-s/action-eslint@v3
-        with:
-          working-directory: cdk
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ignore-path: '.eslintignore'
-          extensions: 'ts'
-          annotations: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          filter_mode: diff_context
+          workdir: cdk

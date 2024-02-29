@@ -1,4 +1,4 @@
-use tracing::{event, instrument, span, Level};
+use tracing::{event, instrument, Level};
 
 use super::{DatabaseCredentials, DatabaseCredentialsProvider};
 
@@ -30,7 +30,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
     #[instrument(name = "environment", skip_all)]
     fn provide_host(&self, credentials: &mut DatabaseCredentials) {
         credentials.host = std::env::var("DB_HOST").ok();
-        match credentials.host { 
+        match credentials.host {
             Some(_) => event!(Level::INFO, "Providing host"),
             None => ()
         }
@@ -39,7 +39,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
     #[instrument(name = "environment", skip_all)]
     fn provide_password(&self, credentials: &mut DatabaseCredentials) {
         credentials.password = std::env::var("DB_PASSWORD").ok();
-        match credentials.password { 
+        match credentials.password {
             Some(_) => event!(Level::INFO, "Providing password"),
             None => ()
         }
@@ -48,7 +48,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
     #[instrument(name = "environment", skip_all)]
     fn provide_port(&self, credentials: &mut DatabaseCredentials) {
         credentials.port = std::env::var("DB_PORT").ok();
-        match credentials.port { 
+        match credentials.port {
             Some(_) => event!(Level::INFO, "Providing port"),
             None => ()
         }
@@ -58,7 +58,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
     fn provide_username(&self, credentials: &mut DatabaseCredentials) {
         credentials.username = std::env::var("DB_USERNAME").ok();
 
-        match credentials.username { 
+        match credentials.username {
             Some(_) => event!(Level::INFO, "Providing username"),
             None => ()
         }

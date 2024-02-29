@@ -23,7 +23,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
         credentials.database = std::env::var("DB_NAME").ok();
         match credentials.database {
             Some(_) => event!(Level::INFO, "Providing database name"),
-            None => ()
+            None => (),
         }
     }
 

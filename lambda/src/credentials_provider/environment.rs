@@ -32,7 +32,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
         credentials.host = std::env::var("DB_HOST").ok();
         match credentials.host {
             Some(_) => event!(Level::INFO, "Providing host"),
-            None => ()
+            None => (),
         }
     }
 
@@ -41,7 +41,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
         credentials.password = std::env::var("DB_PASSWORD").ok();
         match credentials.password {
             Some(_) => event!(Level::INFO, "Providing password"),
-            None => ()
+            None => (),
         }
     }
 
@@ -50,7 +50,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
         credentials.port = std::env::var("DB_PORT").ok();
         match credentials.port {
             Some(_) => event!(Level::INFO, "Providing port"),
-            None => ()
+            None => (),
         }
     }
 
@@ -60,7 +60,7 @@ impl DatabaseCredentialsProvider for EnvironmentCredentialsProvider {
 
         match credentials.username {
             Some(_) => event!(Level::INFO, "Providing username"),
-            None => ()
+            None => (),
         }
     }
 }

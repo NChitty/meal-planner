@@ -18,7 +18,6 @@ pub(super) struct SecretsManagerCredentialsProvider {
 }
 
 impl SecretsManagerCredentialsProvider {
-
     #[instrument(name = "secrets_manager", skip_all)]
     async fn get_secret_json(client: &Client) -> Result<Value, Box<dyn Error>> {
         let secret_id = std::env::var("SECRET_ARN")?;

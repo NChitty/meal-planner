@@ -2,6 +2,7 @@ use std::future::Future;
 
 use uuid::Uuid;
 
+pub mod credentials_provider;
 pub mod recipe;
 pub mod services;
 

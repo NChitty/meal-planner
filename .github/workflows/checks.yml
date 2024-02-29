@@ -51,15 +51,17 @@ jobs:
         working-directory: lambda
         run: cargo test
 
-  build:
+  eslint:
+    name: "CDK Lint"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
-      - name: Install modules
-        run: |
-          cd cdk
-          npm install
-      - name: Run ESLint
-        run: |
-          cd cdk
-          npx eslint . --ext .js,.jsx,.ts,.tsx
+      - uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          filter_mode: diff_context
+          workdir: cdk

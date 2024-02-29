@@ -64,7 +64,7 @@ jobs:
           npm ci
       - uses: sibiraj-s/action-eslint@v3
         with:
-          working-dir: cdk
+          working-directory: cdk
           token: ${{ secrets.GITHUB_TOKEN }}
           ignore-path: '.eslintignore'
           extensions: 'ts'

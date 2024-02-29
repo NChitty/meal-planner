@@ -1,6 +1,6 @@
 import { Construct } from 'constructs';
-import { Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
-import { Code, Function, Handler, ParamsAndSecretsLayerVersion, ParamsAndSecretsVersions, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { Code, Function, Handler, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
   InstanceClass,
@@ -15,9 +15,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import {
-  CfnDBProxyTargetGroup,
   Credentials,
   DatabaseInstance,
   DatabaseInstanceEngine,

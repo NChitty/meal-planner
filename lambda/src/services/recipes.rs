@@ -12,9 +12,6 @@ use crate::services::ApplicationContext;
 use crate::Repository;
 
 #[derive(Clone)]
-pub(super) struct TestRecipeRepository {}
-
-#[derive(Clone)]
 pub(super) struct PostgresRecipeRepository {
     pool: PgPool,
 }

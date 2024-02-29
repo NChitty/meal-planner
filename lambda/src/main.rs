@@ -6,6 +6,7 @@ use lambda::services;
 use lambda_http::{run, Error};
 use serde::Deserialize;
 use serde_json::{json, Value};
+use tracing::info;
 
 #[derive(Debug, Deserialize)]
 struct Root {
@@ -29,6 +30,7 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .init();
 
+    info!("Starting services:");
     let recipe_service = services::recipes().await;
     let app = Router::new()
         .route("/", get(root))

@@ -1,3 +1,7 @@
+use std::fmt::Debug;
+
+use tracing::instrument;
+
 use self::default::DefaultsCredentialsProvider;
 use self::environment::EnvironmentCredentialsProvider;
 use self::secrets_manager::SecretsManagerCredentialsProvider;
@@ -6,7 +10,7 @@ mod default;
 mod environment;
 mod secrets_manager;
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct DatabaseCredentials {
     database: Option<String>,
     host: Option<String>,
@@ -20,7 +24,7 @@ impl DatabaseCredentials {
         format!(
             "postgresql://{}:{}@{}:{}/{}",
             self.username.as_ref().unwrap(),
-            self.password.as_ref().unwrap(),
+            urlencoding::encode(self.password.as_ref().unwrap()),
             self.host.as_ref().unwrap(),
             self.port.as_ref().unwrap(),
             self.database.as_ref().unwrap(),
@@ -28,7 +32,7 @@ impl DatabaseCredentials {
     }
 }
 
-pub trait DatabaseCredentialsProvider {
+pub trait DatabaseCredentialsProvider: Debug {
     fn execute(&self, credentials: &mut DatabaseCredentials) {
         if credentials.database.is_none() {
             self.provide_database(credentials);
@@ -78,6 +82,7 @@ pub(self) fn into_next(
     Some(Box::new(credentials_provider))
 }
 
+#[instrument(name = "credentials_provider")]
 pub async fn get_credentials() -> DatabaseCredentials {
     let defaults_provider = DefaultsCredentialsProvider::default();
     let environment_provider = EnvironmentCredentialsProvider::new(defaults_provider);

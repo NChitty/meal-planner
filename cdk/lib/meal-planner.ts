@@ -1,16 +1,17 @@
 import { Construct } from 'constructs';
-import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
-import { Code, Function, Handler, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { Code, Function, Handler, ParamsAndSecretsLayerVersion, ParamsAndSecretsVersions, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
   InstanceClass,
   InstanceSize,
   InstanceType,
+  InterfaceVpcEndpoint,
+  InterfaceVpcEndpointAwsService,
   Port,
   PrivateSubnet,
   SecurityGroup,
   Vpc,
-  SubnetType,
 } from 'aws-cdk-lib/aws-ec2';
 import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
@@ -22,6 +23,7 @@ import {
   DatabaseInstanceEngine,
   PostgresEngineVersion,
 } from 'aws-cdk-lib/aws-rds';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 /**
  * Stack for deploying meal planner app.
@@ -42,18 +44,28 @@ export default class MealPlannerStack extends Stack {
     );
 
     const vpc = Vpc.fromLookup(this, 'DefaultVpc', { isDefault: true });
+    const privateSubnetA = new PrivateSubnet(this, 'PrivateSubnetA', {
+      vpcId: vpc.vpcId,
+      availabilityZone: vpc.availabilityZones[0],
+      cidrBlock: '172.31.96.0/24',
+    });
+    const privateSubnetB = new PrivateSubnet(this, 'PrivateSubnetB', {
+      vpcId: vpc.vpcId,
+      availabilityZone: vpc.availabilityZones[1],
+      cidrBlock: '172.31.97.0/24',
+    });
+
+    new InterfaceVpcEndpoint(this, 'SecretsManagerEndpoint', {
+      service: InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+      vpc,
+      subnets: {
+        subnets: [privateSubnetA, privateSubnetB],
+      },
+    });
 
     vpc.privateSubnets.push(
-        new PrivateSubnet(this, 'PrivateSubnetA', {
-          vpcId: vpc.vpcId,
-          availabilityZone: vpc.availabilityZones[0],
-          cidrBlock: '172.31.96.0/24',
-        }),
-        new PrivateSubnet(this, 'PrivateSubnetB', {
-          vpcId: vpc.vpcId,
-          availabilityZone: vpc.availabilityZones[1],
-          cidrBlock: '172.31.97.0/24',
-        }),
+        privateSubnetA,
+        privateSubnetB,
     );
 
     const lambdaRdsProxySecurityGroup = new SecurityGroup(this, 'Lambda RDS Proxy SG', {
@@ -86,11 +98,6 @@ export default class MealPlannerStack extends Stack {
       },
     });
 
-    new StringParameter(this, 'DatabaseCredentialArn', {
-      parameterName: 'rds-credentials-arn',
-      stringValue: databaseCredentialsSecret.secretArn,
-    });
-
     const rdsInstance = new DatabaseInstance(this, 'DBInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_15,
@@ -111,29 +118,25 @@ export default class MealPlannerStack extends Stack {
       securityGroups: [dbConnectionSecurityGroup],
     });
 
-    // Workaround for bug where TargetGroupName is not set but required
-    const targetGroup = proxy.node.children.find((child: any) => {
-      return child instanceof CfnDBProxyTargetGroup;
-    }) as CfnDBProxyTargetGroup;
-
-    targetGroup.addPropertyOverride('TargetGroupName', 'default');
-
     const handler = new Function(this, 'MealPlannerFunction', {
+      functionName: 'MealPlannerFunction',
       runtime: Runtime.FROM_IMAGE,
       code: Code.fromEcrImage(repo, {}),
       handler: Handler.FROM_IMAGE,
       environment: {
+        AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH: 'true',
         DB_HOST: proxy.endpoint,
-        DB_NAME: 'meal-planner',
+        DB_NAME: 'postgres',
         DB_USERNAME: databaseUsername,
         SECRET_ARN: databaseCredentialsSecret.secretArn,
       },
-      securityGroups: [lambdaRdsProxySecurityGroup],
+      logRetention: RetentionDays.ONE_WEEK,
       vpc,
-      vpcSubnets: {
-        subnetType: SubnetType.PRIVATE_WITH_EGRESS,
-      },
+      securityGroups: [lambdaRdsProxySecurityGroup],
     });
+
+    databaseCredentialsSecret.grantRead(handler);
+    proxy.grantConnect(handler);
 
     new LambdaRestApi(this, 'MealPlannerApi', {
       handler,

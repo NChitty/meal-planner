@@ -34,7 +34,7 @@ export default class PipelineStack extends Stack {
     const synth = new pipelines.ShellStep('Synth', {
       /* eslint-disable max-len */
       input: pipelines.CodePipelineSource.connection('NChitty/meal-planner', 'feature/cicd/pipelines', {
-        connectionArn: 'arn:aws:codestar-connections:us-east-1:654654503876:connection/a5ac8deb-b2ea-43bc-8b23-648adee88cdd',
+        connectionArn: 'arn:aws:codestar-connections:us-east-1:211125587522:connection/4aa04046-6a83-4774-ad05-50049811955d',
       /* eslint-enable max-len */
       }),
       commands: [

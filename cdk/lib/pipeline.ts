@@ -41,6 +41,7 @@ export default class PipelineStack extends Stack {
 
     const pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
       synth,
+      crossAccountKeys: true,
     });
 
     pipeline.addStage(new MealPlannerStage(this, 'MealPlannerAppProd', {

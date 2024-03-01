@@ -6,5 +6,5 @@ import * as pipeline from '../lib/pipeline';
 
 const app = new cdk.App();
 new PipelineStack(app, 'MealPlannerPipeline', {
-  env: pipeline.stagingEnvironment,
+  env: pipeline.sharedEnvironment,
 });

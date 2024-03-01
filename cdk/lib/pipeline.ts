@@ -2,6 +2,12 @@ import { Environment, Stack, StackProps, pipelines } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import MealPlannerStage from './application-stage';
 
+
+export const sharedEnvironment: Environment = {
+  account: '211125587522',
+  region: 'us-east-1',
+};
+
 export const stagingEnvironment: Environment = {
   account: '381491920629',
   region: 'us-east-1',

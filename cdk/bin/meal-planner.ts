@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import MealPlannerStack from '../lib/meal-planner';
+import MealPlannerStage from '../lib/application-stage';
 
+export const stagingEnvironment: cdk.Environment = {
+  account: '381491920629',
+  region: 'us-east-1',
+};
+
+export const prodEnvironment: cdk.Environment = {
+  account: '654654503876',
+  region: 'us-east-1',
+};
 const app = new cdk.App();
-new MealPlannerStack(app, 'MealPlannerStack', {
-  env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION,
-  },
-});
+new MealPlannerStage(app, 'MealPlannerApp', { env: prodEnvironment });

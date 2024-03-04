@@ -34,7 +34,7 @@ export default class PipelineStack extends Stack {
 
     const synth = new pipelines.ShellStep('Synth', {
       /* eslint-disable max-len */
-      input: pipelines.CodePipelineSource.connection('NChitty/meal-planner', 'main', {
+      input: pipelines.CodePipelineSource.connection('NChitty/meal-planner', 'feature/cicd/pipelines', {
         connectionArn: 'arn:aws:codestar-connections:us-east-1:211125587522:connection/4aa04046-6a83-4774-ad05-50049811955d',
       /* eslint-enable max-len */
       }),
@@ -43,7 +43,6 @@ export default class PipelineStack extends Stack {
         'npm ci',
         'npm run build',
         'npx cdk synth',
-        'cd cdk',
       ],
       primaryOutputDirectory: path.join(__dirname, '..', 'cdk.out'),
     });

@@ -1,6 +1,7 @@
 import { Environment, Stack, StackProps, pipelines } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import MealPlannerStage from './application-stage';
+import path = require('path');
 
 
 export const sharedEnvironment: Environment = {

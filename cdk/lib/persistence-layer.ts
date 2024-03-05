@@ -89,7 +89,7 @@ export default class PersistenceLayerStack extends cdk.Stack {
       allocatedStorage: 20,
       maxAllocatedStorage: 20,
       backupRetention: cdk.Duration.days(0),
-      databaseName: 'meal-planner',
+      databaseName: 'mealplanner',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       deletionProtection: false,
       securityGroups: [dbConnectionSecurityGroup],

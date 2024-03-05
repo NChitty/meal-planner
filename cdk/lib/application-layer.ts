@@ -60,7 +60,7 @@ export default class ApplicationLayerStack extends cdk.Stack {
       environment: {
         AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH: 'true',
         DB_HOST: props.proxy.endpoint,
-        DB_NAME: 'meal-planner',
+        DB_NAME: 'mealplanner',
         DB_USERNAME: props.databaseUsername,
         SECRET_ARN: props.databaseCredentialsSecret.secretArn,
       },

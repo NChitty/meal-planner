@@ -1,7 +1,6 @@
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as secretsManager from 'aws-cdk-lib/aws-secretsmanager';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import { Code, Function, Handler, Runtime } from 'aws-cdk-lib/aws-lambda';
@@ -61,7 +60,7 @@ export default class ApplicationLayerStack extends cdk.Stack {
       environment: {
         AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH: 'true',
         DB_HOST: props.proxy.endpoint,
-        DB_NAME: 'postgres',
+        DB_NAME: 'meal-planner',
         DB_USERNAME: props.databaseUsername,
         SECRET_ARN: props.databaseCredentialsSecret.secretArn,
       },

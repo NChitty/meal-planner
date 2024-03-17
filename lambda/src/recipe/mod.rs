@@ -45,10 +45,7 @@ impl TryFrom<GetItemOutput> for Recipe {
         let id = Uuid::try_parse(id_attr_as_str.as_str())
             .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        Ok(Self {
-            id,
-            name,
-        })
+        Ok(Self { id, name })
     }
 }
 

@@ -16,7 +16,9 @@ struct ApplicationContext<T> {
 pub async fn recipes() -> Router {
     info!("Initializing recipe service");
     let sdk_config = aws_config::load_defaults(BehaviorVersion::latest()).await;
-    let table_name = std::env::var("RECIPE_TABLE_NAME").ok().unwrap_or("recipes".to_string());
+    let table_name = std::env::var("RECIPE_TABLE_NAME")
+        .ok()
+        .unwrap_or("recipes".to_string());
 
     let repo = DynamoDbRecipeRepository::new(&sdk_config, &table_name);
     let recipe_context = ApplicationContext { repo };

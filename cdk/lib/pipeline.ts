@@ -67,10 +67,6 @@ export default class PipelineStack extends Stack {
 
     const deploy = pipeline.addWave('Deploy');
     deploy.addStage(stagingStage);
-    deploy.addStage(prodStage, {
-      pre: [
-        new ManualApprovalStep('ProdApprovalStep'),
-      ],
-    });
+    deploy.addStage(prodStage).addPre(new ManualApprovalStep('ProdApproval'));
   }
 }

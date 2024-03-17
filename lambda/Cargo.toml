@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 aws-config = "1.1.6"
+aws-sdk-dynamodb = "1.18.0"
 aws-sdk-secretsmanager = "1.16.0"
 axum = "0.7.3"
 lambda_http = "0.9.0"

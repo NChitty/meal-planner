@@ -1,6 +1,12 @@
-import { Environment, Stack, StackProps, pipelines } from 'aws-cdk-lib';
+import { Environment, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import MealPlannerStage from './application-stage';
+import {
+  CodePipeline,
+  CodePipelineSource,
+  ManualApprovalStep,
+  ShellStep,
+} from 'aws-cdk-lib/pipelines';
 import path = require('path');
 
 
@@ -32,9 +38,9 @@ export default class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const synth = new pipelines.ShellStep('Synth', {
+    const synth = new ShellStep('Synth', {
       /* eslint-disable max-len */
-      input: pipelines.CodePipelineSource.connection('NChitty/meal-planner', 'main', {
+      input: CodePipelineSource.connection('NChitty/meal-planner', 'main', {
         connectionArn: 'arn:aws:codestar-connections:us-east-1:211125587522:connection/4aa04046-6a83-4774-ad05-50049811955d',
       /* eslint-enable max-len */
       }),
@@ -47,13 +53,24 @@ export default class PipelineStack extends Stack {
       primaryOutputDirectory: path.join('.', 'cdk', 'cdk.out'),
     });
 
-    const pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
+    const pipeline = new CodePipeline(this, 'Pipeline', {
       synth,
       crossAccountKeys: true,
     });
 
-    pipeline.addStage(new MealPlannerStage(this, 'MealPlannerAppProd', {
+    const stagingStage = new MealPlannerStage(this, 'MealPlannerAppStaging', {
+      env: stagingEnvironment,
+    });
+    const prodStage = new MealPlannerStage(this, 'MealPlannerAppProd', {
       env: prodEnvironment,
-    }));
+    });
+
+    const deploy = pipeline.addWave('Deploy');
+    deploy.addStage(stagingStage);
+    deploy.addStage(prodStage, {
+      pre: [
+        new ManualApprovalStep('ProdApprovalStep'),
+      ],
+    });
   }
 }

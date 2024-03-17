@@ -52,8 +52,18 @@ export default class PipelineStack extends Stack {
       crossAccountKeys: true,
     });
 
-    pipeline.addStage(new MealPlannerStage(this, 'MealPlannerAppProd', {
-      env: prodEnvironment,
+    const deploy = pipeline.addWave('Deploy');
+    deploy.addStage(new MealPlannerStage(this, 'MealPlannerAppStaging', {
+      env: stagingEnvironment,
     }));
+    deploy.addStage(
+        new MealPlannerStage(this, 'MealPlannerAppProd', {
+          env: prodEnvironment,
+        }),
+        {
+          pre: [
+            new ManualApprovalStep('ProdApprovalStep'),
+          ],
+        });
   }
 }

@@ -1,9 +1,9 @@
 use aws_config::BehaviorVersion;
-use axum::routing::get;
+use axum::routing::{get, post};
 use axum::Router;
 use tracing::{info, instrument};
 
-use crate::recipe::DynamoDbRecipeRepository;
+use crate::recipe::repository::DynamoDbRecipe;
 
 mod recipes;
 
@@ -20,10 +20,11 @@ pub async fn recipes() -> Router {
         .ok()
         .unwrap_or("recipes".to_string());
 
-    let repo = DynamoDbRecipeRepository::new(&sdk_config, &table_name);
+    let repo = DynamoDbRecipe::new(&sdk_config, &table_name);
     let recipe_context = ApplicationContext { repo };
 
     Router::new()
-        .route("/:id", get(recipes::read_one::<DynamoDbRecipeRepository>))
+        .route("/:id", get(recipes::read_one::<DynamoDbRecipe>))
+        .route("/", post(recipes::create::<DynamoDbRecipe>))
         .with_state(recipe_context)
 }

@@ -59,9 +59,11 @@ export default class PipelineStack extends Stack {
     });
 
     const stagingStage = new MealPlannerStage(this, 'MealPlannerAppStaging', {
+      domain: 'api.staging.mealplanner.chittyinsights.com',
       env: stagingEnvironment,
     });
     const prodStage = new MealPlannerStage(this, 'MealPlannerAppProd', {
+      domain: 'api.mealplanner.chittyinsights.com',
       env: prodEnvironment,
     });
 

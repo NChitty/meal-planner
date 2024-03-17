@@ -5,12 +5,17 @@ import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import path = require('path');
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 export interface ApplicationLayerStackProps extends StackProps {
   /**
     * Table where the partition key refers to the top-level element of recipes.
     */
   readonly recipeTable: TableV2;
+  /**
+    * The domain for where to host the api.
+    */
+  readonly domain: string;
 }
 
 /**
@@ -44,9 +49,16 @@ export default class ApplicationLayerStack extends Stack {
     props.recipeTable.grantReadWriteData(handler);
 
 
-    new LambdaRestApi(this, 'MealPlannerApi', {
+    const api = new LambdaRestApi(this, 'MealPlannerApi', {
       handler,
       proxy: true,
+    });
+
+    api.addDomainName('ApiDomain', {
+      domainName: props.domain,
+      certificate: new Certificate(this, 'ApiDomainCertificate', {
+        domainName: props.domain,
+      }),
     });
   }
 }

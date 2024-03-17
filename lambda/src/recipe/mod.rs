@@ -13,10 +13,11 @@ pub struct Recipe {
 }
 
 impl Recipe {
+    #[must_use]
     pub fn create_new(id: Uuid, value: &CreateRecipe) -> Self {
         Self {
             id,
-            name: value.name.to_owned(),
+            name: value.name.clone(),
         }
     }
 }

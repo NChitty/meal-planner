@@ -10,12 +10,13 @@ use super::Recipe;
 use crate::Repository;
 
 #[derive(Clone)]
-pub struct DynamoDbRecipeRepository {
+pub struct DynamoDbRecipe {
     client: Client,
     table_name: String,
 }
 
-impl DynamoDbRecipeRepository {
+impl DynamoDbRecipe {
+    #[must_use]
     pub fn new(sdk_config: &SdkConfig, table_name: &str) -> Self {
         Self {
             client: Client::new(sdk_config),
@@ -24,7 +25,7 @@ impl DynamoDbRecipeRepository {
     }
 }
 
-impl Repository<Recipe> for DynamoDbRecipeRepository {
+impl Repository<Recipe> for DynamoDbRecipe {
     async fn find_by_id(&self, id: Uuid) -> Result<Recipe, StatusCode> {
         let get_item_result = self
             .client

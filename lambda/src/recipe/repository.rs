@@ -1,12 +1,13 @@
 use aws_config::SdkConfig;
-use aws_sdk_dynamodb::{operation::get_item::GetItemError, types::AttributeValue, Client};
+use aws_sdk_dynamodb::operation::get_item::GetItemError;
+use aws_sdk_dynamodb::types::AttributeValue;
+use aws_sdk_dynamodb::Client;
 use axum::http::StatusCode;
 use serde_dynamo::aws_sdk_dynamodb_1::{from_item, to_item};
 use uuid::Uuid;
 
-use crate::Repository;
-
 use super::Recipe;
+use crate::Repository;
 
 #[derive(Clone)]
 pub struct DynamoDbRecipeRepository {

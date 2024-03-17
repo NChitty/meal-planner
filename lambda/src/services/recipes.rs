@@ -25,7 +25,7 @@ pub(super) async fn create<T>(
     Json(payload): Json<CreateRecipe>,
 ) -> Result<Json<Recipe>, StatusCode>
 where
-     T: Repository<Recipe>
+    T: Repository<Recipe>,
 {
     let recipe = Recipe::create_new(Uuid::new_v4(), &payload);
     state.repo.save(&recipe).await?;

@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct CreateRecipe {
-    pub(super) name: String
+    pub(super) name: String,
 }
 
 #[cfg(test)]

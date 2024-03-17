@@ -3,8 +3,8 @@ use uuid::Uuid;
 
 use self::request_models::CreateRecipe;
 
-pub mod request_models;
 pub mod repository;
+pub mod request_models;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct Recipe {
@@ -34,7 +34,8 @@ impl Default for Recipe {
 mod test {
     use uuid::Uuid;
 
-    use super::{request_models::CreateRecipe, Recipe};
+    use super::request_models::CreateRecipe;
+    use super::Recipe;
 
     const ID: Uuid = Uuid::nil();
     const NAME: &str = "Name";
@@ -42,11 +43,17 @@ mod test {
     #[test]
     fn create_from_request() {
         let create_request = CreateRecipe {
-            name: NAME.to_owned()
+            name: NAME.to_owned(),
         };
 
         let recipe = Recipe::create_new(Uuid::nil(), &create_request);
 
-        assert_eq!(Recipe { id: ID, name: NAME.to_owned() }, recipe);
+        assert_eq!(
+            Recipe {
+                id: ID,
+                name: NAME.to_owned()
+            },
+            recipe
+        );
     }
 }

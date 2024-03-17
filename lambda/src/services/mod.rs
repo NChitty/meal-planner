@@ -1,9 +1,9 @@
+use aws_config::BehaviorVersion;
 use axum::routing::get;
 use axum::Router;
 use tracing::{info, instrument};
 
-use crate::credentials_provider::{self, DatabaseCredentials};
-use crate::services::recipes::PostgresRecipeRepository;
+use crate::recipe::DynamoDbRecipeRepository;
 
 mod recipes;
 
@@ -15,13 +15,15 @@ struct ApplicationContext<T> {
 #[instrument(name = "recipes")]
 pub async fn recipes() -> Router {
     info!("Initializing recipe service");
-    let db_credentials: DatabaseCredentials = credentials_provider::get_credentials().await;
-    let connection_string = db_credentials.get_connection_string();
+    let sdk_config = aws_config::load_defaults(BehaviorVersion::latest()).await;
+    let table_name = std::env::var("RECIPE_TABLE_NAME")
+        .ok()
+        .unwrap_or("recipes".to_string());
 
-    let repo = PostgresRecipeRepository::new(&connection_string).await;
+    let repo = DynamoDbRecipeRepository::new(&sdk_config, &table_name);
     let recipe_context = ApplicationContext { repo };
 
     Router::new()
-        .route("/:id", get(recipes::read_one::<PostgresRecipeRepository>))
+        .route("/:id", get(recipes::read_one::<DynamoDbRecipeRepository>))
         .with_state(recipe_context)
 }

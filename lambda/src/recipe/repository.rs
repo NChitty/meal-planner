@@ -9,13 +9,13 @@ use crate::Repository;
 use super::Recipe;
 
 #[derive(Clone)]
-pub(super) struct DynamoDbRecipeRepository {
+pub struct DynamoDbRecipeRepository {
     client: Client,
     table_name: String,
 }
 
 impl DynamoDbRecipeRepository {
-    pub(super) fn new(sdk_config: &SdkConfig, table_name: &str) -> Self {
+    pub fn new(sdk_config: &SdkConfig, table_name: &str) -> Self {
         Self {
             client: Client::new(sdk_config),
             table_name: table_name.to_owned(),

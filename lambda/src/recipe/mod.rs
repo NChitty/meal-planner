@@ -35,17 +35,18 @@ mod test {
     use uuid::Uuid;
 
     use super::{request_models::CreateRecipe, Recipe};
+
     const ID: Uuid = Uuid::nil();
-    const NAME: String = "Name".to_owned();
+    const NAME: &str = "Name";
 
     #[test]
     fn create_from_request() {
         let create_request = CreateRecipe {
-            name: NAME
+            name: NAME.to_owned()
         };
 
         let recipe = Recipe::create_new(Uuid::nil(), &create_request);
 
-        assert_eq!(Recipe { id: ID, name: NAME }, recipe);
+        assert_eq!(Recipe { id: ID, name: NAME.to_owned() }, recipe);
     }
 }

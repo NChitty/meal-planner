@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct CreateRecipe {
-    pub(crate) name: String
+    pub(super) name: String
 }
 
 #[cfg(test)]
@@ -13,14 +13,15 @@ mod test {
         "name": "Basic Recipe"
     }"#;
 
-    const STRUCT: CreateRecipe = CreateRecipe {
-        name: "Basic Recipe".to_owned()
-    };
+    const NAME: &str = "Basic Recipe";
 
     #[test]
     fn deserialize_create_recipe_request() {
-        let deserialize_result: CreateRecipe = serde_json::from_str(JSON).unwrap();
+        let actual: CreateRecipe = serde_json::from_str(JSON).unwrap();
+        let expected = CreateRecipe {
+            name: NAME.to_owned(),
+        };
 
-        assert_eq!(STRUCT, deserialize_result);
+        assert_eq!(expected, actual);
     }
 }

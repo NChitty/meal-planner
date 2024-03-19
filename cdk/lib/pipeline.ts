@@ -112,6 +112,7 @@ export default class PipelineStack extends Stack {
       parentHostedZoneId: projectsHostedZone.hostedZoneId,
     });
 
+    pipeline.addStage(sharedStage);
     pipeline.addStage(stagingStage);
     pipeline.addStage(prodStage).addPre(new ManualApprovalStep('ProdApproval'));
   }

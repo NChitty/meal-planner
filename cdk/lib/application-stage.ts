@@ -25,7 +25,7 @@ export default class MealPlannerStage extends Stage {
 
     const persistanceLayer = new PersistenceLayerStack(this, 'PersistenceLayer');
     new ApplicationLayerStack(this, 'ApplicationLayer', {
-      delegationRole: props.delegationRole
+      delegationRole: props.delegationRole,
       recipeTable: persistanceLayer.recipeTable,
       domain: props.domain,
       parentHostedZoneId: props.parentHostedZoneId,

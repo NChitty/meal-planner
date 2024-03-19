@@ -29,6 +29,7 @@ export class HostedZoneDelegationRole extends Construct {
   readonly defaultDomain: string = 'mealplanner.projects.chittyinsights.com';
 
   public readonly delegationRole: Role;
+  public readonly normalizedDomain: string;
 
   /**
     * The construct containing the role.
@@ -39,6 +40,7 @@ export class HostedZoneDelegationRole extends Construct {
     */
   constructor(scope: Construct, id: string, props: HostedZoneDelegationProps) {
     super(scope, id);
+    this.normalizedDomain = this.normalizeRecordName(props.projectEnvironment.subdomain);
     this.delegationRole = new Role(this, 'CrossAccountRole', {
       roleName: `${props.projectEnvironment.name}HostedZoneDelegationRole`,
       assumedBy: new AccountPrincipal(`${props.projectEnvironment.account || this.defaultAccount}`),
@@ -58,9 +60,7 @@ export class HostedZoneDelegationRole extends Construct {
               resources: [props.hostedZoneArn],
               conditions: {
                 'ForAllValues:StringLike': {
-                  'route53:ChangeResourceRecordSetsNormalizedRecordNames': [
-                    this.normalizeRecordName(props.projectEnvironment.subdomain),
-                  ],
+                  'route53:ChangeResourceRecordSetsNormalizedRecordNames': [this.normalizedDomain],
                 },
               },
             }),

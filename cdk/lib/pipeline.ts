@@ -100,19 +100,12 @@ export default class PipelineStack extends Stack {
     projectsHostedZone.grantDelegation(prodRoleWrapper.delegationRole);
 
     const stagingStage = new MealPlannerStage(this, 'MealPlannerAppStaging', {
-      delegationRole: stagingRoleWrapper.delegationRole,
-      domain: stagingRoleWrapper.normalizedDomain,
       env: stagingEnvironment,
-      parentHostedZoneId: projectsHostedZone.hostedZoneId,
     });
     const prodStage = new MealPlannerStage(this, 'MealPlannerAppProd', {
-      delegationRole: prodRoleWrapper.delegationRole,
-      domain: prodRoleWrapper.normalizedDomain,
       env: prodEnvironment,
-      parentHostedZoneId: projectsHostedZone.hostedZoneId,
     });
 
-    pipeline.addStage(sharedStage);
     pipeline.addStage(stagingStage);
     pipeline.addStage(prodStage).addPre(new ManualApprovalStep('ProdApproval'));
   }

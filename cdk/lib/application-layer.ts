@@ -5,17 +5,24 @@ import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import path = require('path');
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
+import { Role } from 'aws-cdk-lib/aws-iam';
+import { CrossAccountZoneDelegationRecord, PublicHostedZone } from 'aws-cdk-lib/aws-route53';
 
 export interface ApplicationLayerStackProps extends StackProps {
-  /**
-    * Table where the partition key refers to the top-level element of recipes.
-    */
-  readonly recipeTable: TableV2;
+  readonly delegationRole: Role;
+
   /**
     * The domain for where to host the api.
     */
   readonly domain: string;
+
+  readonly parentHostedZoneId: string;
+
+  /**
+    * Table where the partition key refers to the top-level element of recipes.
+    */
+  readonly recipeTable: TableV2;
 }
 
 /**
@@ -48,16 +55,27 @@ export default class ApplicationLayerStack extends Stack {
 
     props.recipeTable.grantReadWriteData(handler);
 
+    const hostedZone = new PublicHostedZone(this, 'HostedZone', {
+      zoneName: props.domain,
+    });
+
+    new CrossAccountZoneDelegationRecord(this, 'Delegate', {
+      delegatedZone: hostedZone,
+      parentHostedZoneName: props.parentHostedZoneId,
+      delegationRole: props.delegationRole,
+    });
 
     const api = new LambdaRestApi(this, 'MealPlannerApi', {
       handler,
       proxy: true,
     });
 
+    const apiDomainName = 'api.'.concat(props.domain);
     api.addDomainName('ApiDomain', {
-      domainName: props.domain,
+      domainName: apiDomainName,
       certificate: new Certificate(this, 'ApiDomainCertificate', {
-        domainName: props.domain,
+        domainName: apiDomainName,
+        validation: CertificateValidation.fromDnsMultiZone({ apiDomainName: hostedZone }),
       }),
     });
   }

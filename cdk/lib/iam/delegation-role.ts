@@ -8,7 +8,7 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { ProjectEnvironment } from '../pipeline';
 
-export interface HostedZoneDelegationProps {
+export interface HostedZoneDelegateProps {
   /**
     * The parent hosted zone arn.
     */
@@ -24,7 +24,7 @@ export interface HostedZoneDelegationProps {
 /**
   * Wrapper that builds a role to allow delegation of subdomain records to another account.
   */
-export class HostedZoneDelegationRole extends Construct {
+export class HostedZoneDelegate extends Construct {
   readonly defaultAccount: string = '211125587522';
   readonly defaultDomain: string = 'mealplanner.projects.chittyinsights.com';
 
@@ -36,9 +36,9 @@ export class HostedZoneDelegationRole extends Construct {
     *
     * @param{Construct} scope the parent scope
     * @param{string} id logical id
-    * @param{HostedZoneDelegationProps} props properties for this role
+    * @param{HostedZoneDelegateProps} props properties for this role
     */
-  constructor(scope: Construct, id: string, props: HostedZoneDelegationProps) {
+  constructor(scope: Construct, id: string, props: HostedZoneDelegateProps) {
     super(scope, id);
     this.normalizedDomain = this.normalizeRecordName(props.projectEnvironment.subdomain);
     this.delegationRole = new Role(this, 'CrossAccountRole', {

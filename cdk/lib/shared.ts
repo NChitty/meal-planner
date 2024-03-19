@@ -1,7 +1,7 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
-import { HostedZoneDelegateConstruct } from './iam/delegation-role';
+import { HostedZoneDelegate } from './iam/delegation-role';
 import { ProjectEnvironment } from './pipeline';
 
 export interface SharedStackProps extends StackProps {
@@ -15,7 +15,7 @@ export interface SharedStackProps extends StackProps {
   */
 export class SharedStack extends Stack {
   public readonly hostedZoneId: string;
-  public readonly roleWrapper: HostedZoneDelegateConstruct;
+  public readonly roleWrapper: HostedZoneDelegate;
   /**
     * Build the stack resources.
     * @param{Construct} scope parent
@@ -32,7 +32,7 @@ export class SharedStack extends Stack {
     );
     this.hostedZoneId = projectsHostedZone.hostedZoneId;
 
-    this.roleWrapper = new HostedZoneDelegateConstruct(
+    this.roleWrapper = new HostedZoneDelegate(
         this,
         `${props.environment.name}HostedZoneDelegate`,
         {

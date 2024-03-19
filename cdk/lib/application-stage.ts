@@ -2,9 +2,12 @@ import { Construct } from 'constructs';
 import { Stage, StageProps } from 'aws-cdk-lib';
 import PersistenceLayerStack from './persistence-layer';
 import ApplicationLayerStack from './application-layer';
+import { Role } from 'aws-cdk-lib/aws-iam';
 
 export interface MealPlannerStageProps extends StageProps {
+  readonly delegationRole: Role;
   readonly domain: string;
+  readonly parentHostedZoneId: string;
 }
 
 /**
@@ -22,8 +25,10 @@ export default class MealPlannerStage extends Stage {
 
     const persistanceLayer = new PersistenceLayerStack(this, 'PersistenceLayer');
     new ApplicationLayerStack(this, 'ApplicationLayer', {
+      delegationRole: props.delegationRole
       recipeTable: persistanceLayer.recipeTable,
       domain: props.domain,
+      parentHostedZoneId: props.parentHostedZoneId,
     });
   }
 }

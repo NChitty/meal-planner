@@ -8,6 +8,8 @@ import {
   ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import path = require('path');
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import { HostedZoneDelegationRole } from './iam/delegation-role';
 
 export interface ProjectEnvironment extends Environment {
   /**
@@ -52,6 +54,12 @@ export default class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    const projectsHostedZone = HostedZone.fromHostedZoneId(
+        this,
+        'ProjectsHostedZone',
+        'Z09758583PVMFV16WNRXR',
+    );
+
     const synth = new ShellStep('Synth', {
       /* eslint-disable max-len */
       input: CodePipelineSource.connection('NChitty/meal-planner', 'main', {
@@ -72,12 +80,31 @@ export default class PipelineStack extends Stack {
       crossAccountKeys: true,
     });
 
+    const stagingRoleWrapper = new HostedZoneDelegationRole(
+        this,
+        `${stagingEnvironment.name}HostedZoneDelegationRole`,
+        {
+          hostedZoneArn: projectsHostedZone.hostedZoneArn,
+          projectEnvironment: stagingEnvironment,
+        });
+
+    projectsHostedZone.grantDelegation(stagingRoleWrapper.delegationRole);
+
+    const prodRoleWrapper = new HostedZoneDelegationRole(
+        this,
+        `${prodEnvironment.name}HostedZoneDelegationRole`,
+        {
+          hostedZoneArn: projectsHostedZone.hostedZoneArn,
+          projectEnvironment: stagingEnvironment,
+        });
+    projectsHostedZone.grantDelegation(prodRoleWrapper.delegationRole);
+
     const stagingStage = new MealPlannerStage(this, 'MealPlannerAppStaging', {
-      domain: 'api.staging.mealplanner.chittyinsights.com',
+      domain: stagingRoleWrapper.normalizedDomain,
       env: stagingEnvironment,
     });
     const prodStage = new MealPlannerStage(this, 'MealPlannerAppProd', {
-      domain: 'api.mealplanner.chittyinsights.com',
+      domain: prodRoleWrapper.normalizedDomain,
       env: prodEnvironment,
     });
 

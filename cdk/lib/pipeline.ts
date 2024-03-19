@@ -9,20 +9,34 @@ import {
 } from 'aws-cdk-lib/pipelines';
 import path = require('path');
 
+export interface ProjectEnvironment extends Environment {
+  /**
+    * The name of the environment for use in logical ids.
+    */
+  readonly name: string;
+
+  /**
+    * For the given project, the subdomain after the project subdomain. Leave blank for "production"
+    */
+  readonly subdomain?: string;
+}
 
 export const sharedEnvironment: Environment = {
   account: '211125587522',
   region: 'us-east-1',
 };
 
-export const stagingEnvironment: Environment = {
+export const stagingEnvironment: ProjectEnvironment = {
   account: '381491920629',
   region: 'us-east-1',
+  name: 'Staging',
+  subdomain: 'staging',
 };
 
-export const prodEnvironment: Environment = {
+export const prodEnvironment: ProjectEnvironment = {
   account: '654654503876',
   region: 'us-east-1',
+  name: 'Prod',
 };
 
 /**

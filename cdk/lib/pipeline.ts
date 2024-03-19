@@ -8,7 +8,8 @@ import {
   ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import path = require('path');
-import { SharedStage } from './shared';
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import { HostedZoneDelegationRole } from './iam/delegation-role';
 
 export interface ProjectEnvironment extends Environment {
   /**
@@ -53,6 +54,12 @@ export default class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    const projectsHostedZone = HostedZone.fromHostedZoneId(
+        this,
+        'ProjectsHostedZone',
+        'Z09758583PVMFV16WNRXR',
+    );
+
     const synth = new ShellStep('Synth', {
       /* eslint-disable max-len */
       input: CodePipelineSource.connection('NChitty/meal-planner', 'main', {
@@ -73,30 +80,39 @@ export default class PipelineStack extends Stack {
       crossAccountKeys: true,
     });
 
-    const environments = [stagingEnvironment, prodEnvironment];
-    const sharedStage = new SharedStage(this, 'MealPlannerShared', {
-      environments,
-      env: sharedEnvironment,
+    const stagingRoleWrapper = new HostedZoneDelegationRole(
+        this,
+        `${stagingEnvironment.name}HostedZoneDelegationRole`,
+        {
+          hostedZoneArn: projectsHostedZone.hostedZoneArn,
+          projectEnvironment: stagingEnvironment,
+        });
+
+    projectsHostedZone.grantDelegation(stagingRoleWrapper.delegationRole);
+
+    const prodRoleWrapper = new HostedZoneDelegationRole(
+        this,
+        `${prodEnvironment.name}HostedZoneDelegationRole`,
+        {
+          hostedZoneArn: projectsHostedZone.hostedZoneArn,
+          projectEnvironment: stagingEnvironment,
+        });
+    projectsHostedZone.grantDelegation(prodRoleWrapper.delegationRole);
+
+    const stagingStage = new MealPlannerStage(this, 'MealPlannerAppStaging', {
+      delegationRole: stagingRoleWrapper.delegationRole,
+      domain: stagingRoleWrapper.normalizedDomain,
+      env: stagingEnvironment,
+      parentHostedZoneId: projectsHostedZone.hostedZoneId,
     });
-
-    const stagingStage = this.buildStage(stagingEnvironment, sharedStage);
-    const prodStage = this.buildStage(prodEnvironment, sharedStage);
-
+    const prodStage = new MealPlannerStage(this, 'MealPlannerAppProd', {
+      delegationRole: prodRoleWrapper.delegationRole,
+      domain: prodRoleWrapper.normalizedDomain,
+      env: prodEnvironment,
+      parentHostedZoneId: projectsHostedZone.hostedZoneId,
+    });
 
     pipeline.addStage(stagingStage);
-    pipeline.addStage(prodStage)
-        .addPre(new ManualApprovalStep('ProdApproval'));
+    pipeline.addStage(prodStage).addPre(new ManualApprovalStep('ProdApproval'));
   }
-
-  readonly buildStage = (
-      environment: ProjectEnvironment,
-      sharedStage: SharedStage,
-  ): MealPlannerStage => {
-    return new MealPlannerStage(this, `MealPlannerApp${environment.name}`, {
-      delegationRole: sharedStage.environmentRoles[environment.name].delegationRole,
-      domain: sharedStage.environmentRoles[environment.name].normalizedDomain,
-      env: environment,
-      parentHostedZoneId: sharedStage.hostedZoneId,
-    });
-  };
 }

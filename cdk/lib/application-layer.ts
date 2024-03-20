@@ -75,10 +75,9 @@ export default class ApplicationLayerStack extends Stack {
       domainName,
       validation: CertificateValidation.fromDns(hostedZone),
     });
-    const apiDomainName = api.addDomainName('ApiDomain', {
+    api.addDomainName('ApiDomain', {
       domainName,
       certificate,
     });
-    apiDomainName.addApiMapping(api.deploymentStage);
   }
 }

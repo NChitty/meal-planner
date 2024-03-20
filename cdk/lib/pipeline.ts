@@ -74,11 +74,39 @@ export default class PipelineStack extends Stack {
       crossAccountKeys: true,
     });
 
+    const projectsHostedZone = HostedZone.fromHostedZoneId(
+        this,
+        'ProjectsHostedZone',
+        'Z09758583PVMFV16WNRXR',
+    );
+
+    const stagingHostedZoneDelegate = new HostedZoneDelegate(
+        this,
+        `${stagingEnvironment.name}HostedZoneDelegate`,
+        {
+          hostedZoneArn: projectsHostedZone.hostedZoneArn,
+          projectEnvironment: stagingEnvironment,
+        });
+    projectsHostedZone.grantDelegation(stagingHostedZoneDelegate.delegationRole);
+
+    const prodHostedZoneDelegate = new HostedZoneDelegate(
+        this,
+        `${prodEnvironment.name}HostedZoneDelegate`,
+        {
+          hostedZoneArn: projectsHostedZone.hostedZoneArn,
+          projectEnvironment: prodEnvironment,
+        });
+    projectsHostedZone.grantDelegation(prodHostedZoneDelegate.delegationRole);
+
     const stagingStage = new MealPlannerStage(this, 'MealPlannerAppStaging', {
       env: stagingEnvironment,
+      roleWrapper: stagingHostedZoneDelegate,
+      parentHostedZone: 'projects.chittyinsights.com',
     });
     const prodStage = new MealPlannerStage(this, 'MealPlannerAppProd', {
       env: prodEnvironment,
+      roleWrapper: prodHostedZoneDelegate,
+      parentHostedZone: 'projects.chittyinsights.com',
     });
 
     pipeline.addStage(stagingStage);

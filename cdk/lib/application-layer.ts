@@ -70,13 +70,15 @@ export default class ApplicationLayerStack extends Stack {
       proxy: true,
     });
 
-    const apiDomainName = 'api.'.concat(props.domain);
-    api.addDomainName('ApiDomain', {
-      domainName: apiDomainName,
-      certificate: new Certificate(this, 'ApiDomainCertificate', {
-        domainName: apiDomainName,
-        validation: CertificateValidation.fromDnsMultiZone({ apiDomainName: hostedZone }),
-      }),
+    const domainName = 'api.'.concat(props.domain);
+    const certificate = new Certificate(this, 'ApiDomainCertificate', {
+      domainName,
+      validation: CertificateValidation.fromDns(hostedZone),
     });
+    const apiDomainName = api.addDomainName('ApiDomain', {
+      domainName,
+      certificate,
+    });
+    apiDomainName.addApiMapping(api.deploymentStage);
   }
 }

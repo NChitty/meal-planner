@@ -78,7 +78,7 @@ export default class ApplicationLayerStack extends Stack {
     });
     const api = new LambdaRestApi(this, 'MealPlannerApi', {
       handler,
-      proxy: false,
+      proxy: true,
       domainName: {
         domainName,
         certificate,
@@ -97,7 +97,5 @@ export default class ApplicationLayerStack extends Stack {
       recordName: 'api',
       target: RecordTarget.fromAlias(new ApiGatewayDomain(apiDomainName)),
     });
-
-    api.root.addProxy();
   }
 }

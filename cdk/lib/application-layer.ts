@@ -71,7 +71,7 @@ export default class ApplicationLayerStack extends Stack {
       delegationRole: props.delegationRole,
     });
 
-    const domainName = ['api.', props.domain].join();
+    const domainName = ['api', props.domain].join('.');
     const certificate = new Certificate(this, 'ApiDomainCertificate', {
       domainName,
       validation: CertificateValidation.fromDns(hostedZone),

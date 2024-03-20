@@ -7,7 +7,13 @@ import path = require('path');
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { Role } from 'aws-cdk-lib/aws-iam';
-import { CrossAccountZoneDelegationRecord, PublicHostedZone } from 'aws-cdk-lib/aws-route53';
+import {
+  ARecord,
+  CrossAccountZoneDelegationRecord,
+  PublicHostedZone,
+  RecordTarget,
+} from 'aws-cdk-lib/aws-route53';
+import { ApiGateway } from 'aws-cdk-lib/aws-route53-targets';
 
 export interface ApplicationLayerStackProps extends StackProps {
   readonly delegationRole: Role;
@@ -65,19 +71,24 @@ export default class ApplicationLayerStack extends Stack {
       delegationRole: props.delegationRole,
     });
 
-    const api = new LambdaRestApi(this, 'MealPlannerApi', {
-      handler,
-      proxy: true,
-    });
-
     const domainName = 'api.'.concat(props.domain);
     const certificate = new Certificate(this, 'ApiDomainCertificate', {
       domainName,
       validation: CertificateValidation.fromDns(hostedZone),
     });
-    api.addDomainName('ApiDomain', {
-      domainName,
-      certificate,
+    const api = new LambdaRestApi(this, 'MealPlannerApi', {
+      handler,
+      proxy: true,
+      domainName: {
+        domainName,
+        certificate,
+      },
+    });
+
+    new ARecord(this, 'ApiAliasRecord', {
+      zone: hostedZone,
+      recordName: 'api',
+      target: RecordTarget.fromAlias(new ApiGateway(api)),
     });
   }
 }

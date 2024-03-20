@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Code, Function, Handler, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
+import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import path = require('path');
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
@@ -76,18 +76,15 @@ export default class ApplicationLayerStack extends Stack {
       domainName,
       validation: CertificateValidation.fromDns(hostedZone),
     });
-    const api = new RestApi(this, 'MealPlannerApi', {
+    const api = new LambdaRestApi(this, 'MealPlannerApi', {
+      handler,
+      proxy: false,
       domainName: {
         domainName,
         certificate,
         basePath: 'mealplanner',
       },
       disableExecuteApiEndpoint: true,
-    });
-    const lambdaIntegration = new LambdaIntegration(handler);
-    const resource = api.root.addResource('mealplanner');
-    resource.addProxy({
-      defaultIntegration: lambdaIntegration,
     });
 
     const apiDomainName = api.domainName || api.addDomainName('ApiDomainName', {
@@ -100,5 +97,7 @@ export default class ApplicationLayerStack extends Stack {
       recordName: 'api',
       target: RecordTarget.fromAlias(new ApiGatewayDomain(apiDomainName)),
     });
+
+    api.root.addProxy();
   }
 }

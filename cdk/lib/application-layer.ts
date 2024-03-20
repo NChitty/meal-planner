@@ -71,7 +71,7 @@ export default class ApplicationLayerStack extends Stack {
       delegationRole: props.delegationRole,
     });
 
-    const domainName = 'api.'.concat(props.domain);
+    const domainName = ['api', props.domain].join('.');
     const certificate = new Certificate(this, 'ApiDomainCertificate', {
       domainName,
       validation: CertificateValidation.fromDns(hostedZone),
@@ -82,6 +82,7 @@ export default class ApplicationLayerStack extends Stack {
       domainName: {
         domainName,
         certificate,
+        basePath: 'mealplanner',
       },
       disableExecuteApiEndpoint: true,
     });

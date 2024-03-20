@@ -78,6 +78,7 @@ export default class ApplicationLayerStack extends Stack {
     });
     const api = new LambdaRestApi(this, 'MealPlannerApi', {
       handler,
+      proxy: false,
       domainName: {
         domainName,
         certificate,

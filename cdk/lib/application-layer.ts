@@ -83,6 +83,7 @@ export default class ApplicationLayerStack extends Stack {
         domainName,
         certificate,
       },
+      disableExecuteApiEndpoint: true,
     });
 
     const apiDomainName = api.domainName || api.addDomainName('ApiDomainName', {

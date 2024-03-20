@@ -84,11 +84,11 @@ export default class ApplicationLayerStack extends Stack {
       },
       disableExecuteApiEndpoint: true,
     });
-    const lambdaIntegration = new LambdaIntegration(handler, {});
-    const resource = api.root.addResource('mealplanner', {
+    const lambdaIntegration = new LambdaIntegration(handler);
+    const resource = api.root.addResource('mealplanner');
+    resource.addProxy({
       defaultIntegration: lambdaIntegration,
     });
-    resource.addMethod('ANY');
 
     const apiDomainName = api.domainName || api.addDomainName('ApiDomainName', {
       domainName,

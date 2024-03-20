@@ -3,7 +3,7 @@ import { Stage, StageProps } from 'aws-cdk-lib';
 import PersistenceLayerStack from './persistence-layer';
 import ApplicationLayerStack from './application-layer';
 import { ProjectEnvironment } from './pipeline';
-import { HostedZoneDelegate } from './iam/delegation-role';
+import { HostedZoneDelegate } from './constructs/delegate-wrapper';
 
 export interface MealPlannerStageProps extends StageProps {
   readonly env: ProjectEnvironment;

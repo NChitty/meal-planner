@@ -43,22 +43,22 @@ async fn main() -> Result<(), Error> {
     let app = Router::new()
         .route("/", get(root))
         .route("/ping", get(ping))
-        .nest("/recipes", recipe_service);
-    let mealplanner = Router::new().nest("/mealplanner", app).layer(
-        TraceLayer::new_for_http()
-            .make_span_with(DefaultMakeSpan::new().include_headers(true))
-            .on_request(DefaultOnRequest::new().level(Level::INFO))
-            .on_response(
-                DefaultOnResponse::new()
-                    .level(Level::INFO)
-                    .latency_unit(LatencyUnit::Micros),
-            )
-            .on_failure(
-                DefaultOnFailure::new()
-                    .level(Level::INFO)
-                    .latency_unit(LatencyUnit::Micros),
-            ),
-    );
+        .nest("/recipes", recipe_service)
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(DefaultMakeSpan::new().include_headers(true))
+                .on_request(DefaultOnRequest::new().level(Level::INFO))
+                .on_response(
+                    DefaultOnResponse::new()
+                        .level(Level::INFO)
+                        .latency_unit(LatencyUnit::Micros),
+                )
+                .on_failure(
+                    DefaultOnFailure::new()
+                        .level(Level::INFO)
+                        .latency_unit(LatencyUnit::Micros),
+                ),
+        );
 
-    run(mealplanner).await
+    run(app).await
 }

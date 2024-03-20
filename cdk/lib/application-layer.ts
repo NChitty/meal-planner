@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Code, Function, Handler, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
+import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import path = require('path');
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
@@ -71,14 +71,12 @@ export default class ApplicationLayerStack extends Stack {
       delegationRole: props.delegationRole,
     });
 
-    const domainName = ['api', props.domain].join('.');
+    const domainName = ['api.', props.domain].join();
     const certificate = new Certificate(this, 'ApiDomainCertificate', {
       domainName,
       validation: CertificateValidation.fromDns(hostedZone),
     });
-    const api = new LambdaRestApi(this, 'MealPlannerApi', {
-      handler,
-      proxy: false,
+    const api = new RestApi(this, 'MealPlannerApi', {
       domainName: {
         domainName,
         certificate,
@@ -86,7 +84,10 @@ export default class ApplicationLayerStack extends Stack {
       },
       disableExecuteApiEndpoint: true,
     });
-    api.root.addResource('mealplanner').addProxy();
+    const lambdaIntegration = new LambdaIntegration(handler, {});
+    api.root.addResource('mealplanner', {
+      defaultIntegration: lambdaIntegration,
+    });
 
     const apiDomainName = api.domainName || api.addDomainName('ApiDomainName', {
       domainName,

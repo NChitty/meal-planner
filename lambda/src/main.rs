@@ -6,7 +6,15 @@ use lambda::services;
 use lambda_http::{run, Error};
 use serde::Deserialize;
 use serde_json::{json, Value};
-use tracing::info;
+use tower_http::trace::{
+    DefaultMakeSpan,
+    DefaultOnFailure,
+    DefaultOnRequest,
+    DefaultOnResponse,
+    TraceLayer,
+};
+use tower_http::LatencyUnit;
+use tracing::{info, Level};
 
 #[derive(Debug, Deserialize)]
 struct Root {
@@ -36,6 +44,21 @@ async fn main() -> Result<(), Error> {
         .route("/", get(root))
         .route("/ping", get(ping))
         .nest("/recipes", recipe_service);
+    let mealplanner = Router::new().nest("/mealplanner", app).layer(
+        TraceLayer::new_for_http()
+            .make_span_with(DefaultMakeSpan::new().include_headers(true))
+            .on_request(DefaultOnRequest::new().level(Level::INFO))
+            .on_response(
+                DefaultOnResponse::new()
+                    .level(Level::INFO)
+                    .latency_unit(LatencyUnit::Micros),
+            )
+            .on_failure(
+                DefaultOnFailure::new()
+                    .level(Level::INFO)
+                    .latency_unit(LatencyUnit::Micros),
+            ),
+    );
 
-    run(app).await
+    run(mealplanner).await
 }

@@ -13,7 +13,7 @@ import {
   PublicHostedZone,
   RecordTarget,
 } from 'aws-cdk-lib/aws-route53';
-import { ApiGateway } from 'aws-cdk-lib/aws-route53-targets';
+import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
 export interface ApplicationLayerStackProps extends StackProps {
   readonly delegationRole: Role;
@@ -85,10 +85,15 @@ export default class ApplicationLayerStack extends Stack {
       },
     });
 
+    const apiDomainName = api.domainName || api.addDomainName('ApiDomainName', {
+      domainName,
+      certificate,
+    });
+
     new ARecord(this, 'ApiAliasRecord', {
       zone: hostedZone,
       recordName: 'api',
-      target: RecordTarget.fromAlias(new ApiGateway(api)),
+      target: RecordTarget.fromAlias(new ApiGatewayDomain(apiDomainName)),
     });
   }
 }

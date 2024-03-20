@@ -9,7 +9,7 @@ import {
 } from 'aws-cdk-lib/pipelines';
 import path = require('path');
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
-import { HostedZoneDelegate } from './iam/delegation-role';
+import { HostedZoneDelegate } from './constructs/delegate-wrapper';
 
 export interface ProjectEnvironment extends Environment {
   /**

@@ -26,7 +26,7 @@ export interface HostedZoneDelegateProps {
   */
 export class HostedZoneDelegate extends Construct {
   readonly defaultAccount: string = '211125587522';
-  readonly defaultDomain: string = 'mealplanner.projects.chittyinsights.com';
+  readonly defaultDomain: string = 'projects.chittyinsights.com';
 
   public readonly delegationRole: Role;
   public readonly normalizedDomain: string;

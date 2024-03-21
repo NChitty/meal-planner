@@ -23,7 +23,8 @@ export interface ApplicationLayerStackProps extends StackProps {
     */
   readonly domain: string;
 
-  readonly parentHostedZone: string;
+  readonly parentHostedZoneId?: string;
+  readonly parentHostedZoneName?: string;
 
   /**
     * Table where the partition key refers to the top-level element of recipes.
@@ -67,7 +68,8 @@ export default class ApplicationLayerStack extends Stack {
 
     new CrossAccountZoneDelegationRecord(this, 'Delegate', {
       delegatedZone: hostedZone,
-      parentHostedZoneName: props.parentHostedZone,
+      parentHostedZoneId: props.parentHostedZoneId,
+      parentHostedZoneName: props.parentHostedZoneName,
       delegationRole: props.delegationRole,
     });
 

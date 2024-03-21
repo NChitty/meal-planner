@@ -74,39 +74,11 @@ export default class PipelineStack extends Stack {
       crossAccountKeys: true,
     });
 
-    const chittyInsightsHostedZone = HostedZone.fromHostedZoneId(
-        this,
-        'ChittyInsightsHostedZone',
-        'Z0712659E60WG40V5EW7',
-    );
-
-    const stagingHostedZoneDelegate = new HostedZoneDelegate(
-        this,
-        `${stagingEnvironment.name}HostedZoneDelegate`,
-        {
-          hostedZoneArn: chittyInsightsHostedZone.hostedZoneArn,
-          projectEnvironment: stagingEnvironment,
-        });
-    chittyInsightsHostedZone.grantDelegation(stagingHostedZoneDelegate.delegationRole);
-
-    const prodHostedZoneDelegate = new HostedZoneDelegate(
-        this,
-        `${prodEnvironment.name}HostedZoneDelegate`,
-        {
-          hostedZoneArn: chittyInsightsHostedZone.hostedZoneArn,
-          projectEnvironment: prodEnvironment,
-        });
-    chittyInsightsHostedZone.grantDelegation(prodHostedZoneDelegate.delegationRole);
-
     const stagingStage = new MealPlannerStage(this, 'MealPlannerAppStaging', {
       env: stagingEnvironment,
-      roleWrapper: stagingHostedZoneDelegate,
-      parentHostedZone: 'projects.chittyinsights.com',
     });
     const prodStage = new MealPlannerStage(this, 'MealPlannerAppProd', {
       env: prodEnvironment,
-      roleWrapper: prodHostedZoneDelegate,
-      parentHostedZone: 'projects.chittyinsights.com',
     });
 
     pipeline.addStage(stagingStage);

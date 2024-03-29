@@ -15,7 +15,9 @@ CMD [ "cargo", "lambda", "watch", "-a", "0.0.0.0", "-p", "8080"]
 FROM meal-planner-api-development as meal-planner-api-build
 
 USER 0
-RUN cargo lambda build -r -l /tmp
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+  --mount=type=cache,target=./target \
+  cargo lambda build -r -l /tmp
 
 FROM public.ecr.aws/lambda/provided:al2023 as meal-planner-api
 

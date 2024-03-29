@@ -14,6 +14,7 @@ import {
   RecordTarget,
 } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
+import { MealPlannerHttpApi } from './constructs/api';
 
 export interface ApplicationLayerStackProps extends StackProps {
   readonly delegationRole: Role;
@@ -73,31 +74,10 @@ export default class ApplicationLayerStack extends Stack {
       delegationRole: props.delegationRole,
     });
 
-    const domainName = ['api', props.domain].join('.');
-    const certificate = new Certificate(this, 'ApiDomainCertificate', {
-      domainName,
-      validation: CertificateValidation.fromDns(hostedZone),
-    });
-    const api = new LambdaRestApi(this, 'MealPlannerApi', {
-      handler,
-      proxy: true,
-      domainName: {
-        domainName,
-        certificate,
-        basePath: 'mealplanner',
-      },
-      disableExecuteApiEndpoint: true,
-    });
-
-    const apiDomainName = api.domainName || api.addDomainName('ApiDomainName', {
-      domainName,
-      certificate,
-    });
-
-    new ARecord(this, 'ApiAliasRecord', {
-      zone: hostedZone,
-      recordName: 'api',
-      target: RecordTarget.fromAlias(new ApiGatewayDomain(apiDomainName)),
+    new MealPlannerHttpApi(this, 'ApiConstruct', {
+      domain: props.domain,
+      hostedZone,
+      lambda: handler,
     });
   }
 }

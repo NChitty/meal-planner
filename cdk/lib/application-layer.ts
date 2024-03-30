@@ -1,19 +1,14 @@
 import { Construct } from 'constructs';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Code, Function, Handler, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import path = require('path');
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
-import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import {
-  ARecord,
   CrossAccountZoneDelegationRecord,
   PublicHostedZone,
-  RecordTarget,
 } from 'aws-cdk-lib/aws-route53';
-import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { MealPlannerHttpApi } from './constructs/api';
 
 export interface ApplicationLayerStackProps extends StackProps {
@@ -72,6 +67,12 @@ export default class ApplicationLayerStack extends Stack {
       parentHostedZoneId: props.parentHostedZoneId,
       parentHostedZoneName: props.parentHostedZoneName,
       delegationRole: props.delegationRole,
+    });
+
+    new MealPlannerHttpApi(this, 'Api', {
+      domain: props.domain,
+      hostedZone,
+      lambda: handler,
     });
   }
 }

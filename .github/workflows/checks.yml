@@ -81,7 +81,7 @@ jobs:
           filter_mode: diff_context
           workdir: cdk
 
-  eslint:
+  playwright:
     name: "Playwright Lint"
     runs-on: ubuntu-latest
     permissions:

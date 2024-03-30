@@ -42,7 +42,7 @@ export class MealPlannerHttpApi extends Construct {
           domain.regionalHostedZoneId,
       )),
     });
-    new HttpApi(scope, 'Api', {
+    new HttpApi(scope, 'HttpApi', {
       apiName: 'MealPlanner',
       defaultIntegration: lambda,
       defaultDomainMapping: {

@@ -68,5 +68,11 @@ export default class ApplicationLayerStack extends Stack {
       parentHostedZoneName: props.parentHostedZoneName,
       delegationRole: props.delegationRole,
     });
+
+    new MealPlannerHttpApi(this, 'Api', {
+      domain: props.domain,
+      hostedZone,
+      lambda: handler,
+    });
   }
 }

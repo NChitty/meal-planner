@@ -17,11 +17,10 @@ test('hello name', async ({ request }) => {
   const name = 'Nicholas';
   const response = await request.get('', {
     params: {
-      'name': name
-    }
+      'name': name,
+    },
   });
 
   expect(response.ok()).toBeTruthy();
   expect(await response.json()).toEqual({ msg: `Hello ${name}!` });
 });
-

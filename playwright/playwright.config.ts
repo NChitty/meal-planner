@@ -20,10 +20,12 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  reporter: process.env.CI ? 'github' : 'line',
+  /* Shared settings for all the projects below.
+   * See https://playwright.dev/docs/api/class-testoptions.
+   */
   use: {
-    baseURL: 'https://api.staging.projects.chittyinsights.com/mealplanner',
+    baseURL: 'https://api.staging.projects.chittyinsights.com/mealplanner/',
     extraHTTPHeaders: {
       'Accept': 'application/json',
       // 'Authorization': `token ${process.env.API_TOKEN}`,

@@ -62,15 +62,17 @@ impl Repository<Recipe> for DynamoDbRecipe {
         Ok(())
     }
 
-    async fn delete(&self, id: Uuid) -> Result<(), StatusCode> {
+    async fn delete_by_id(&self, id: Uuid) -> Result<(), StatusCode> {
         self.client
             .delete_item()
             .table_name(&self.table_name)
             .key("id", AttributeValue::S(id.as_hyphenated().to_string()))
+            .condition_expression("attribute_exists(id)")
             .send()
             .await
             .map_err(|sdk_err| match sdk_err.into_service_error() {
-                DeleteItemError::ResourceNotFoundException(_) => StatusCode::NOT_FOUND,
+                DeleteItemError::ConditionalCheckFailedException(_)
+                | DeleteItemError::ResourceNotFoundException(_) => StatusCode::NOT_FOUND,
                 _ => StatusCode::INTERNAL_SERVER_ERROR,
             })?;
 

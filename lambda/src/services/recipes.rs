@@ -33,14 +33,14 @@ where
     Ok(Json(recipe))
 }
 
-pub(super) async fn delete<T>(
+pub(super) async fn delete_one<T>(
     State(state): State<ApplicationContext<T>>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, StatusCode>
 where
     T: Repository<Recipe>,
 {
-    state.repo.delete(id).await?;
+    state.repo.delete_by_id(id).await?;
 
     Ok(StatusCode::NO_CONTENT)
 }

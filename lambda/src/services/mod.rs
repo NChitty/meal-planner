@@ -26,6 +26,6 @@ pub async fn recipes() -> Router {
     Router::new()
         .route("/:id", get(recipes::read_one::<DynamoDbRecipe>))
         .route("/", post(recipes::create::<DynamoDbRecipe>))
-        .route("/:id", delete(recipes::delete::<DynamoDbRecipe>))
+        .route("/:id", delete(recipes::delete_one::<DynamoDbRecipe>))
         .with_state(recipe_context)
 }

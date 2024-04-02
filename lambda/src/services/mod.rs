@@ -1,5 +1,5 @@
 use aws_config::BehaviorVersion;
-use axum::routing::{get, post};
+use axum::routing::{delete, get, post};
 use axum::Router;
 use tracing::{info, instrument};
 
@@ -26,5 +26,6 @@ pub async fn recipes() -> Router {
     Router::new()
         .route("/:id", get(recipes::read_one::<DynamoDbRecipe>))
         .route("/", post(recipes::create::<DynamoDbRecipe>))
+        .route("/:id", delete(recipes::delete::<DynamoDbRecipe>))
         .with_state(recipe_context)
 }

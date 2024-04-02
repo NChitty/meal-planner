@@ -4,7 +4,6 @@ import MealPlannerStage from './application-stage';
 import {
   CodePipeline,
   CodePipelineSource,
-  ManualApprovalStep,
   ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import path = require('path');

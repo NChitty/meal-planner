@@ -1,4 +1,5 @@
 use aws_config::SdkConfig;
+use aws_sdk_dynamodb::operation::delete_item::DeleteItemError;
 use aws_sdk_dynamodb::operation::get_item::GetItemError;
 use aws_sdk_dynamodb::types::AttributeValue;
 use aws_sdk_dynamodb::Client;
@@ -57,6 +58,21 @@ impl Repository<Recipe> for DynamoDbRecipe {
             .send()
             .await
             .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+        Ok(())
+    }
+
+    async fn delete(&self, id: Uuid) -> Result<(), StatusCode> {
+        self.client
+            .delete_item()
+            .table_name(&self.table_name)
+            .key("id", AttributeValue::S(id.as_hyphenated().to_string()))
+            .send()
+            .await
+            .map_err(|sdk_err| match sdk_err.into_service_error() {
+                DeleteItemError::ResourceNotFoundException(_) => StatusCode::NOT_FOUND,
+                _ => StatusCode::INTERNAL_SERVER_ERROR,
+            })?;
 
         Ok(())
     }

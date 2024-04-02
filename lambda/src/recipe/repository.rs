@@ -71,8 +71,7 @@ impl Repository<Recipe> for DynamoDbRecipe {
             .send()
             .await
             .map_err(|sdk_err| match sdk_err.into_service_error() {
-                DeleteItemError::ResourceNotFoundException(_) => StatusCode::NOT_FOUND,
-                DeleteItemError::ConditionalCheckFailedException(_) => StatusCode::NOT_FOUND,
+                DeleteItemError::ConditionalCheckFailedException(_) | DeleteItemError::ResourceNotFoundException(_) => StatusCode::NOT_FOUND,
                 _ => StatusCode::INTERNAL_SERVER_ERROR,
             })?;
 

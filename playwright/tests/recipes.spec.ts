@@ -29,3 +29,9 @@ test('Read Recipe', async ({ request }) => {
     ...data,
   });
 });
+
+test.afterAll('Delete Recipe', async ({ request }) => {
+  const response = await request.delete(`./recipes/${recipeUuid}`);
+
+  expect(response.ok()).toBeTruthy();
+});

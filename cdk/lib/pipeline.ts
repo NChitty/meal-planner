@@ -8,8 +8,6 @@ import {
   ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import path = require('path');
-import { HostedZone } from 'aws-cdk-lib/aws-route53';
-import { HostedZoneDelegate } from './constructs/delegate-wrapper';
 
 export interface ProjectEnvironment extends Environment {
   /**
@@ -81,7 +79,14 @@ export default class PipelineStack extends Stack {
       env: prodEnvironment,
     });
 
-    pipeline.addStage(stagingStage);
-    pipeline.addStage(prodStage).addPre(new ManualApprovalStep('ProdApproval'));
+    pipeline.addStage(stagingStage)
+        .addPost(new ShellStep('Playwright E2E Test', {
+          commands: [
+            'cd playwright',
+            'npm ci',
+            'npx playwright test',
+          ],
+        }));
+    pipeline.addStage(prodStage);
   }
 }

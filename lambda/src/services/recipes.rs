@@ -38,7 +38,7 @@ pub(super) async fn delete<T>(
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, StatusCode>
 where
-     T: Repository<Recipe>
+    T: Repository<Recipe>,
 {
     state.repo.delete(id).await?;
 

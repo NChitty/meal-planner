@@ -1,5 +1,6 @@
 use aws_config::SdkConfig;
-use aws_sdk_dynamodb::operation::{delete_item::DeleteItemError, get_item::GetItemError};
+use aws_sdk_dynamodb::operation::delete_item::DeleteItemError;
+use aws_sdk_dynamodb::operation::get_item::GetItemError;
 use aws_sdk_dynamodb::types::AttributeValue;
 use aws_sdk_dynamodb::Client;
 use axum::http::StatusCode;

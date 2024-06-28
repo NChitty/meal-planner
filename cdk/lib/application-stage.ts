@@ -3,7 +3,7 @@ import { Stage, StageProps } from 'aws-cdk-lib';
 import PersistenceLayerStack from './persistence-layer';
 import ApplicationLayerStack from './application-layer';
 import { ProjectEnvironment } from './pipeline';
-import { SharedLayerStack } from './shared-layer';
+import SharedLayerStack from './shared-layer';
 
 export interface MealPlannerStageProps extends StageProps {
   readonly env: ProjectEnvironment;

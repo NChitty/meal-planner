@@ -1,6 +1,6 @@
 import { App } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { SharedLayerStack } from '../lib/shared-layer';
+import SharedLayerStack from '../lib/shared-layer';
 import { ProjectEnvironment } from '../lib/pipeline';
 
 describe('Shared Layer Stack', () => {

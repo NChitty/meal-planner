@@ -11,7 +11,7 @@ export interface SharedLayerStackProps extends StackProps {
 /**
   * Stack of constructs made in the shared account but need to match state with other accounts.
   */
-export class SharedLayerStack extends Stack {
+export default class SharedLayerStack extends Stack {
   public readonly hostedZone: IHostedZone;
   public readonly hostedZoneDelegate: HostedZoneDelegate;
 

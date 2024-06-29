@@ -4,6 +4,7 @@ import MealPlannerStage from './application-stage';
 import {
   CodePipeline,
   CodePipelineSource,
+  ManualApprovalStep,
   ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import path = require('path');
@@ -52,10 +53,10 @@ export default class PipelineStack extends Stack {
     super(scope, id, props);
 
     const synth = new ShellStep('Synth', {
-      /* eslint-disable max-len */
       input: CodePipelineSource.connection('NChitty/meal-planner', 'main', {
+        /* eslint-disable max-len */
         connectionArn: 'arn:aws:codestar-connections:us-east-1:211125587522:connection/4aa04046-6a83-4774-ad05-50049811955d',
-      /* eslint-enable max-len */
+        /* eslint-enable max-len */
       }),
       commands: [
         'cd cdk',
@@ -86,6 +87,7 @@ export default class PipelineStack extends Stack {
             'npx playwright test',
           ],
         }));
-    pipeline.addStage(prodStage);
+    pipeline.addStage(prodStage)
+        .addPre(new ManualApprovalStep('Promote to Production'));
   }
 }

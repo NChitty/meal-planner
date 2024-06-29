@@ -34,6 +34,7 @@ pub trait DynamoDbClient: Send + Sync {
 pub struct DynamoDbClientImpl(Client);
 
 impl DynamoDbClientImpl {
+    #[must_use]
     pub fn new(sdk_config: &SdkConfig) -> Self { Self(Client::new(sdk_config)) }
 }
 

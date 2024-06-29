@@ -1,10 +1,10 @@
 import { App } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import SharedLayerStack from '../lib/shared-layer';
+import SharedStack from '../lib/shared-layer';
 import { ProjectEnvironment } from '../lib/pipeline';
 
 describe('Shared Layer Stack', () => {
-  test('Provided Subdomain', () => {
+  test('Synthesizes correctly with provided subdomain', () => {
     const app = new App();
 
     // WHEN
@@ -15,7 +15,7 @@ describe('Shared Layer Stack', () => {
       subdomain: 'test',
     };
 
-    const stack = new SharedLayerStack(app, 'TestSharedStack', { projectEnvironment });
+    const stack = new SharedStack(app, 'TestSharedStack', { projectEnvironment });
 
     // THEN
     const template = Template.fromStack(stack);
@@ -121,7 +121,7 @@ describe('Shared Layer Stack', () => {
     });
   });
 
-  test('Not Provided Domain', () => {
+  test('Synthesizes correctly when not provided domain', () => {
     const app = new App();
 
     // WHEN
@@ -131,7 +131,7 @@ describe('Shared Layer Stack', () => {
       name: 'Test',
     };
 
-    const stack = new SharedLayerStack(app, 'TestSharedStack', { projectEnvironment });
+    const stack = new SharedStack(app, 'TestSharedStack', { projectEnvironment });
 
     // THEN
     const template = Template.fromStack(stack);

@@ -3,6 +3,7 @@ use std::future::Future;
 use axum::http::StatusCode;
 use uuid::Uuid;
 
+pub mod aws_client;
 pub mod recipe;
 pub mod services;
 

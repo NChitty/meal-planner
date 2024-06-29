@@ -99,7 +99,10 @@ mod test {
     use aws_sdk_dynamodb::operation::delete_item::DeleteItemOutput;
     use aws_sdk_dynamodb::operation::get_item::GetItemOutput;
     use aws_sdk_dynamodb::operation::put_item::{PutItemError, PutItemOutput};
-    use aws_sdk_dynamodb::types::error::{ConditionalCheckFailedException, ResourceNotFoundException};
+    use aws_sdk_dynamodb::types::error::{
+        ConditionalCheckFailedException,
+        ResourceNotFoundException,
+    };
     use mockall::predicate::eq;
 
     use super::*;
@@ -221,7 +224,7 @@ mod test {
         let result = repo.delete_by_id(Uuid::nil()).await;
         assert!(result.is_err_and(|err| match err {
             StatusCode::NOT_FOUND => true,
-            _ => false
+            _ => false,
         }))
     }
 
@@ -241,7 +244,7 @@ mod test {
         let result = repo.delete_by_id(Uuid::nil()).await;
         assert!(result.is_err_and(|err| match err {
             StatusCode::NOT_FOUND => true,
-            _ => false
+            _ => false,
         }))
     }
 }

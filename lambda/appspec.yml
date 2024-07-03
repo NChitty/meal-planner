@@ -1,8 +1,0 @@
-resources:
-  - 'meal-planner-api':
-      type: "AWS::Lambda::Function"
-      properties:
-        name: "meal-planner-api"
-        alias: my-alias
-        currentversion: 1
-        targetversion: 2

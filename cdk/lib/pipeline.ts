@@ -59,12 +59,11 @@ export default class PipelineStack extends Stack {
         /* eslint-enable max-len */
       }),
       commands: [
-        'cd cdk',
         'npm ci',
         'npm run build',
         'npx cdk synth',
       ],
-      primaryOutputDirectory: path.join('.', 'cdk', 'cdk.out'),
+      primaryOutputDirectory: path.join('.', 'cdk.out'),
     });
 
     const pipeline = new CodePipeline(this, 'Pipeline', {
@@ -82,7 +81,6 @@ export default class PipelineStack extends Stack {
     pipeline.addStage(stagingStage)
         .addPost(new ShellStep('Playwright E2E Test', {
           commands: [
-            'cd playwright',
             'npm ci',
             'npx playwright test',
           ],

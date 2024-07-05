@@ -1,7 +1,15 @@
 [package]
-name = "recipes"
+name = "meal-planner"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+name = "meal_planner"
+path = "src/lib.rs"
+
+[[bin]]
+name = "recipes"
+path = "src/bin/recipes/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

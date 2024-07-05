@@ -1,8 +1,8 @@
 use axum::response::Json;
 use axum::routing::get;
 use axum::Router;
-use meal_planner::services;
 use lambda_http::{run, Error};
+use meal_planner::services;
 use serde_json::{json, Value};
 use tower_http::trace::{
     DefaultMakeSpan,

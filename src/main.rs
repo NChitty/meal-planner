@@ -1,7 +1,7 @@
 use axum::response::Json;
 use axum::routing::get;
 use axum::Router;
-use lambda::services;
+use recipes::services;
 use lambda_http::{run, Error};
 use serde_json::{json, Value};
 use tower_http::trace::{

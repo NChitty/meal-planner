@@ -46,7 +46,6 @@ jobs:
         with:
           components: clippy
       - name: Tests
-        working-directory: lambda
         run: cargo test
 
   tsbuild:

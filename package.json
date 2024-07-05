@@ -1,19 +1,21 @@
 {
-  "name": "infrastructure",
+  "name": "meal-planner",
   "version": "0.1.0",
   "bin": {
-    "infrastructure": "bin/infrastructure.js"
+    "meal-planner": "cdk/bin/meal-planner.ts"
   },
   "scripts": {
     "build": "tsc",
     "cdk": "cdk",
     "lint": "eslint --fix .",
+    "staging-test": "playwright test",
     "test": "jest",
     "watch": "tsc -w"
   },
   "devDependencies": {
+    "@playwright/test": "^1.42.1",
     "@types/jest": "^29.5.12",
-    "@types/node": "20.5.9",
+    "@types/node": "^20.12.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "aws-cdk": "^2.142.1",

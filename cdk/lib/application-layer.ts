@@ -1,15 +1,15 @@
-import { Construct } from 'constructs';
 import { Stack, StackProps } from 'aws-cdk-lib';
-import { Code, Function, Handler, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
-import path = require('path');
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import {
   CrossAccountZoneDelegationRecord,
   PublicHostedZone,
 } from 'aws-cdk-lib/aws-route53';
+import { Construct } from 'constructs';
+import { join } from 'path';
 import { MealPlannerHttpApi } from './constructs/api';
+import { RustFunction } from 'cargo-lambda-cdk';
 
 export interface ApplicationLayerStackProps extends StackProps {
   readonly delegationRole: Role;
@@ -41,14 +41,9 @@ export default class ApplicationLayerStack extends Stack {
   constructor(scope: Construct, id: string, props: ApplicationLayerStackProps) {
     super(scope, id, props);
 
-    const handler = new Function(this, 'MealPlannerFunction', {
-      functionName: 'MealPlannerFunction',
-      runtime: Runtime.FROM_IMAGE,
-      code: Code.fromAssetImage(path.join(__dirname, '..', '..', 'lambda'), {
-        assetName: 'meal-planner-api',
-        target: 'meal-planner-api',
-      }),
-      handler: Handler.FROM_IMAGE,
+    const handler = new RustFunction(this, 'RecipeFunction', {
+      functionName: 'RecipeFunction',
+      manifestPath: join(__dirname, '..', '..', 'Cargo.toml'),
       environment: {
         AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH: 'true',
         RECIPE_TABLE_NAME: props.recipeTable.tableName,

@@ -79,19 +79,20 @@ describe('Application Layer Stack', () => {
         ],
         'Version': '2012-10-17',
       },
-      'PolicyName': Match.stringLikeRegexp('MealPlannerFunctionServiceRoleDefaultPolicy'),
+      'PolicyName': Match.stringLikeRegexp('RecipeFunctionServiceRoleDefaultPolicy'),
       'Roles': [
         {
-          'Ref': Match.stringLikeRegexp('MealPlannerFunctionServiceRole'),
+          'Ref': Match.stringLikeRegexp('RecipeFunctionServiceRole'),
         },
       ],
     });
 
     template.hasResourceProperties('AWS::Lambda::Function', {
       'Code': {
-        'ImageUri': {
+        'S3Bucket': {
           'Fn::Sub': Match.anyValue(),
         },
+        'S3Key': Match.anyValue(),
       },
       'Environment': {
         'Variables': {
@@ -102,8 +103,7 @@ describe('Application Layer Stack', () => {
           },
         },
       },
-      'FunctionName': 'MealPlannerFunction',
-      'PackageType': 'Image',
+      'FunctionName': 'RecipeFunction',
     });
 
     template.hasResourceProperties('AWS::Route53::HostedZone', {
@@ -176,7 +176,7 @@ describe('Application Layer Stack', () => {
       'IntegrationType': 'AWS_PROXY',
       'IntegrationUri': {
         'Fn::GetAtt': [
-          Match.stringLikeRegexp('MealPlannerFunction'),
+          Match.stringLikeRegexp('RecipeFunction'),
           'Arn',
         ],
       },

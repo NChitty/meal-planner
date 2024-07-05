@@ -19,7 +19,6 @@ jobs:
       - uses: mbrobbel/rustfmt-check@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: --manifest-path lambda/Cargo.toml
           mode: review
 
   clippy:
@@ -36,7 +35,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: 'github-pr-review'
           filter_mode: diff_context
-          workdir: lambda
           clippy_flags: "-- -W clippy::pedantic"
 
   tests:
@@ -67,7 +65,7 @@ jobs:
           npm test
 
   eslint:
-    name: "CDK Lint"
+    name: "TS Lint"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,19 +77,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           filter_mode: diff_context
-          workdir: cdk
-
-  playwright:
-    name: "Playwright Lint"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: reviewdog/action-eslint@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-          filter_mode: diff_context
-          workdir: playwright

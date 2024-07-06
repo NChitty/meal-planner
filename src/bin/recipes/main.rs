@@ -28,7 +28,7 @@ async fn main() -> Result<(), Error> {
     let recipes_controller = controller::recipes().await;
     let app = Router::new()
         .route("/ping", get(ping))
-        .nest("/recipes", recipes_controller)
+        .nest("/", recipes_controller)
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(DefaultMakeSpan::new().include_headers(true))

@@ -7,6 +7,13 @@ const NIL_UUID = '00000000-0000-0000-0000-000000000000';
 
 let recipeUuid: string;
 
+test('pingable', async ({ request }) => {
+  const response = await request.get('./recipes/ping');
+
+  expect(response.ok()).toBeTruthy();
+  expect(await response.json()).toEqual({ msg: 'Pong' });
+});
+
 test.describe('Happy Path', () => {
   test.beforeAll('Create Recipe', async ({ request }) => {
     const response = await request.post('./recipes', { data });

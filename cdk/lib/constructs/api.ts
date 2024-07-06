@@ -43,11 +43,11 @@ export class MealPlannerHttpApi extends Construct {
       )),
     });
     new HttpApi(scope, 'HttpApi', {
-      apiName: 'MealPlanner',
+      apiName: 'RecipesApi',
       defaultIntegration: lambda,
       defaultDomainMapping: {
         domainName: domain,
-        mappingKey: 'mealplanner',
+        mappingKey: 'recipes',
       },
       disableExecuteApiEndpoint: true,
     });

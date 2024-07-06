@@ -45,7 +45,6 @@ export default class ApplicationLayerStack extends Stack {
       functionName: 'RecipeFunction',
       manifestPath: join(__dirname, '..', '..', 'Cargo.toml'),
       environment: {
-        AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH: 'true',
         RECIPE_TABLE_NAME: props.recipeTable.tableName,
       },
       logRetention: RetentionDays.ONE_WEEK,

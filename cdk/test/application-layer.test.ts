@@ -100,7 +100,6 @@ describe('Application Layer Stack', () => {
       },
       'Environment': {
         'Variables': {
-          'AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH': 'true',
           'RECIPE_TABLE_NAME': {
             'Fn::ImportValue':
               Match.stringLikeRegexp('TestPersistenceStack'),
@@ -169,7 +168,7 @@ describe('Application Layer Stack', () => {
 
     template.hasResourceProperties('AWS::ApiGatewayV2::Api', {
       'DisableExecuteApiEndpoint': true,
-      'Name': 'MealPlanner',
+      'Name': 'RecipesApi',
       'ProtocolType': 'HTTP',
     });
 
@@ -218,7 +217,7 @@ describe('Application Layer Stack', () => {
       'ApiId': {
         'Ref': 'HttpApiF5A9A8A7',
       },
-      'ApiMappingKey': 'mealplanner',
+      'ApiMappingKey': 'recipes',
       'DomainName': {
         'Ref': 'Domain66AC69E0',
       },

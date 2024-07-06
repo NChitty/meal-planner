@@ -7,8 +7,9 @@
   "scripts": {
     "build": "tsc",
     "cdk": "cdk",
+    "sandbox": "cdk deploy --profile sandbox DevPersistenceLayerStack DevApplicationLayerStack",
     "lint": "eslint --fix .",
-    "staging-test": "playwright test",
+    "playwright": "playwright test",
     "test": "jest",
     "watch": "tsc -w"
   },

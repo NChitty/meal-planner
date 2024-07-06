@@ -23,12 +23,6 @@ const devShared = new SharedLayerStack(app, 'DevSharedLayerStack', {
   projectEnvironment,
 });
 
-
-devShared.addDelegate('ChittyInsightsComHostedZone', {
-  zoneName: 'chittyinsights.com',
-  hostedZoneId: 'Z0712659E60WG40V5EW7',
-});
-
 const { hostedZone, delegate } = devShared.addDelegate(
     'ChittyInsightsDevHostedZone',
     {

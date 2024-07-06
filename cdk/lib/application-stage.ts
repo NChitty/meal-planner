@@ -26,11 +26,6 @@ export default class MealPlannerStage extends Stage {
       projectEnvironment: props.env,
     });
 
-    sharedLayer.addDelegate('ChittyInsightsComHostedZone', {
-      zoneName: 'chittyinsights.com',
-      hostedZoneId: 'Z0712659E60WG40V5EW7',
-    });
-
     const { hostedZone, delegate } = sharedLayer.addDelegate(
         'ChittyInsightsDevHostedZone',
         {

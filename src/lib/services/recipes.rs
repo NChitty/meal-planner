@@ -8,6 +8,12 @@ use crate::recipe::Recipe;
 use crate::services::ApplicationContext;
 use crate::Repository;
 
+/// Attempts to find a recipe in the database given the uuid.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code wrapped in an
+/// error.
 pub async fn read_one<T>(
     State(state): State<ApplicationContext<T>>,
     Path(id): Path<Uuid>,
@@ -20,6 +26,12 @@ where
     Ok(Json(recipe))
 }
 
+/// Attempts to create a recipe in the database.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code wrapped in an
+/// error.
 pub async fn create<T>(
     State(state): State<ApplicationContext<T>>,
     Json(payload): Json<CreateRecipe>,
@@ -33,6 +45,12 @@ where
     Ok(Json(recipe))
 }
 
+/// Attempts to delete a recipe in the database given the uuid.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code wrapped in an
+/// error.
 pub async fn delete_one<T>(
     State(state): State<ApplicationContext<T>>,
     Path(id): Path<Uuid>,

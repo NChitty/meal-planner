@@ -23,11 +23,26 @@ const devShared = new SharedLayerStack(app, 'DevSharedLayerStack', {
   projectEnvironment,
 });
 
+
+devShared.addDelegate('ChittyInsightsComHostedZone', {
+  zoneName: 'chittyinsights.com',
+  hostedZoneId: 'Z0712659E60WG40V5EW7',
+});
+
+const { hostedZone, delegate } = devShared.addDelegate(
+    'ChittyInsightsDevHostedZone',
+    {
+      zoneName: 'chittyinsights.dev',
+      hostedZoneId: 'Z05171022TE0L7DEAZTUK',
+    },
+    'mealplanner.chittyinsights.dev',
+);
+
 const devPersistence = new PersistenceLayerStack(app, 'DevPersistenceLayerStack');
 
 new ApplicationLayerStack(app, 'DevApplicationLayerStack', {
-  delegationRole: devShared.hostedZoneDelegate.delegationRole,
-  parentHostedZoneId: devShared.hostedZone.hostedZoneId,
-  domain: devShared.hostedZoneDelegate.normalizedDomain,
+  delegationRole: delegate.delegationRole,
+  parentHostedZoneId: hostedZone.hostedZoneId,
+  domain: delegate.normalizedDomain,
   recipeTable: devPersistence.recipeTable,
 });

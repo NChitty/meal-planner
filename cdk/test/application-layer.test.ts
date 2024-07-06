@@ -18,12 +18,16 @@ describe('Application Layer Stack', () => {
     };
 
     const sharedStack = new SharedStack(app, 'TestSharedStack', { projectEnvironment });
+    const {
+      hostedZone,
+      delegate,
+    } = sharedStack.addDelegate('Test', { zoneName: 'Test', hostedZoneId: 'Test' });
     const persistenceStack = new PersistenceStack(app, 'TestPersistenceStack');
 
     const stack = new ApplicationStack(app, 'TestApplicationStack', {
-      delegationRole: sharedStack.hostedZoneDelegate.delegationRole,
-      domain: sharedStack.hostedZoneDelegate.normalizedDomain,
-      parentHostedZoneId: sharedStack.hostedZone.hostedZoneId,
+      delegationRole: delegate.delegationRole,
+      domain: delegate.normalizedDomain,
+      parentHostedZoneId: hostedZone.hostedZoneId,
       recipeTable: persistenceStack.recipeTable,
     });
 

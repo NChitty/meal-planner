@@ -84,6 +84,9 @@ export default class PipelineStack extends Stack {
             'npm ci',
             'npx playwright test',
           ],
+          env: {
+            PLAYWRIGHT_BASE_URL: 'api.staging.mealplanner.chittyinsights.dev/mealplanner/',
+          },
         }));
     pipeline.addStage(prodStage)
         .addPre(new ManualApprovalStep('Promote to Production'));

@@ -12,8 +12,8 @@ use crate::Repository;
 ///
 /// # Errors
 ///
-/// This function converts the result of the database operation to a status code wrapped in an
-/// error.
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
 pub async fn read_one<T>(
     State(state): State<ApplicationContext<T>>,
     Path(id): Path<Uuid>,
@@ -30,8 +30,8 @@ where
 ///
 /// # Errors
 ///
-/// This function converts the result of the database operation to a status code wrapped in an
-/// error.
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
 pub async fn create<T>(
     State(state): State<ApplicationContext<T>>,
     Json(payload): Json<CreateRecipe>,
@@ -49,8 +49,8 @@ where
 ///
 /// # Errors
 ///
-/// This function converts the result of the database operation to a status code wrapped in an
-/// error.
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
 pub async fn delete_one<T>(
     State(state): State<ApplicationContext<T>>,
     Path(id): Path<Uuid>,

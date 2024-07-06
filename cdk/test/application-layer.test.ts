@@ -168,7 +168,7 @@ describe('Application Layer Stack', () => {
 
     template.hasResourceProperties('AWS::ApiGatewayV2::Api', {
       'DisableExecuteApiEndpoint': true,
-      'Name': 'MealPlanner',
+      'Name': 'RecipesApi',
       'ProtocolType': 'HTTP',
     });
 
@@ -217,7 +217,7 @@ describe('Application Layer Stack', () => {
       'ApiId': {
         'Ref': 'HttpApiF5A9A8A7',
       },
-      'ApiMappingKey': 'mealplanner',
+      'ApiMappingKey': 'recipes',
       'DomainName': {
         'Ref': 'Domain66AC69E0',
       },

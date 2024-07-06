@@ -1,6 +1,8 @@
 use aws_config::BehaviorVersion;
-use axum::{routing::{delete, get, post}, Router};
-use meal_planner::{recipe::repository::DynamoDbRecipe, services::{recipes, ApplicationContext}};
+use axum::routing::{delete, get, post};
+use axum::Router;
+use meal_planner::recipe::repository::DynamoDbRecipe;
+use meal_planner::services::{recipes, ApplicationContext};
 use tracing::{info, instrument};
 
 #[instrument(name = "recipes")]

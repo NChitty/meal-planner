@@ -16,6 +16,7 @@ describe('Shared Layer Stack', () => {
     };
 
     const stack = new SharedStack(app, 'TestSharedStack', { projectEnvironment });
+    stack.addDelegate('Test', { zoneName: 'test', hostedZoneId: 'test' });
 
     // THEN
     const template = Template.fromStack(stack);
@@ -59,7 +60,7 @@ describe('Shared Layer Stack', () => {
                     [
                       'arn:',
                       { 'Ref': 'AWS::Partition' },
-                      ':route53:::hostedzone/Z0712659E60WG40V5EW7',
+                      ':route53:::hostedzone/test',
                     ],
                   ],
                 },
@@ -69,7 +70,7 @@ describe('Shared Layer Stack', () => {
           PolicyName: 'crossAccountPolicy',
         },
       ],
-      RoleName: `${projectEnvironment.name}HostedZoneDelegationRole`,
+      RoleName: Match.stringLikeRegexp(`(${projectEnvironment.name})*DelegateRole`),
     });
 
     template.hasResourceProperties('AWS::IAM::Policy', {
@@ -95,7 +96,7 @@ describe('Shared Layer Stack', () => {
                 [
                   'arn:',
                   { 'Ref': 'AWS::Partition' },
-                  ':route53:::hostedzone/Z0712659E60WG40V5EW7',
+                  ':route53:::hostedzone/test',
                 ],
               ],
             },
@@ -109,12 +110,12 @@ describe('Shared Layer Stack', () => {
         'Version': '2012-10-17',
       },
       'PolicyName': Match.stringLikeRegexp(
-          `${projectEnvironment.name}HostedZoneDelegateCrossAccountRoleDefaultPolicy`,
+          `(${projectEnvironment.name})*DelegateCrossAccountRoleDefaultPolicy`,
       ),
       'Roles': [
         {
           'Ref': Match.stringLikeRegexp(
-              `${projectEnvironment.name}HostedZoneDelegateCrossAccountRole`,
+              `(${projectEnvironment.name})*DelegateCrossAccountRole`,
           ),
         },
       ],
@@ -132,6 +133,7 @@ describe('Shared Layer Stack', () => {
     };
 
     const stack = new SharedStack(app, 'TestSharedStack', { projectEnvironment });
+    stack.addDelegate('HostedZone', { zoneName: 'test', hostedZoneId: 'test' });
 
     // THEN
     const template = Template.fromStack(stack);
@@ -175,7 +177,7 @@ describe('Shared Layer Stack', () => {
                     [
                       'arn:',
                       { 'Ref': 'AWS::Partition' },
-                      ':route53:::hostedzone/Z0712659E60WG40V5EW7',
+                      ':route53:::hostedzone/test',
                     ],
                   ],
                 },
@@ -185,7 +187,7 @@ describe('Shared Layer Stack', () => {
           PolicyName: 'crossAccountPolicy',
         },
       ],
-      RoleName: `${projectEnvironment.name}HostedZoneDelegationRole`,
+      RoleName: Match.stringLikeRegexp(`(${projectEnvironment.name})*DelegateRole`),
     });
 
     template.hasResourceProperties('AWS::IAM::Policy', {
@@ -211,7 +213,7 @@ describe('Shared Layer Stack', () => {
                 [
                   'arn:',
                   { 'Ref': 'AWS::Partition' },
-                  ':route53:::hostedzone/Z0712659E60WG40V5EW7',
+                  ':route53:::hostedzone/test',
                 ],
               ],
             },
@@ -225,12 +227,12 @@ describe('Shared Layer Stack', () => {
         'Version': '2012-10-17',
       },
       'PolicyName': Match.stringLikeRegexp(
-          `${projectEnvironment.name}HostedZoneDelegateCrossAccountRoleDefaultPolicy`,
+          `(${projectEnvironment.name})*DelegateCrossAccountRoleDefaultPolicy`,
       ),
       'Roles': [
         {
           'Ref': Match.stringLikeRegexp(
-              `${projectEnvironment.name}HostedZoneDelegateCrossAccountRole`,
+              `(${projectEnvironment.name})*DelegateCrossAccountRole`,
           ),
         },
       ],

@@ -8,7 +8,7 @@ use crate::recipe::Recipe;
 use crate::services::ApplicationContext;
 use crate::Repository;
 
-pub(super) async fn read_one<T>(
+pub async fn read_one<T>(
     State(state): State<ApplicationContext<T>>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<Recipe>, StatusCode>
@@ -20,7 +20,7 @@ where
     Ok(Json(recipe))
 }
 
-pub(super) async fn create<T>(
+pub async fn create<T>(
     State(state): State<ApplicationContext<T>>,
     Json(payload): Json<CreateRecipe>,
 ) -> Result<Json<Recipe>, StatusCode>
@@ -33,7 +33,7 @@ where
     Ok(Json(recipe))
 }
 
-pub(super) async fn delete_one<T>(
+pub async fn delete_one<T>(
     State(state): State<ApplicationContext<T>>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, StatusCode>

@@ -2,7 +2,6 @@ use axum::response::Json;
 use axum::routing::get;
 use axum::Router;
 use lambda_http::{run, Error};
-use meal_planner::services;
 use serde_json::{json, Value};
 use tower_http::trace::{
     DefaultMakeSpan,
@@ -12,7 +11,9 @@ use tower_http::trace::{
     TraceLayer,
 };
 use tower_http::LatencyUnit;
-use tracing::{info, Level};
+use tracing::Level;
+
+mod controller;
 
 async fn ping() -> Json<Value> { Json(json!({ "msg": "Pong" })) }
 
@@ -24,11 +25,10 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .init();
 
-    info!("Starting services:");
-    let recipe_service = services::recipes().await;
+    let recipes_controller = controller::recipes().await;
     let app = Router::new()
         .route("/ping", get(ping))
-        .nest("/recipes", recipe_service)
+        .nest("/recipes", recipes_controller)
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(DefaultMakeSpan::new().include_headers(true))

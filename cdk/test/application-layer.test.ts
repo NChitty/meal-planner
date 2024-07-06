@@ -100,7 +100,6 @@ describe('Application Layer Stack', () => {
       },
       'Environment': {
         'Variables': {
-          'AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH': 'true',
           'RECIPE_TABLE_NAME': {
             'Fn::ImportValue':
               Match.stringLikeRegexp('TestPersistenceStack'),

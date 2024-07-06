@@ -25,7 +25,7 @@ export default defineConfig({
    * See https://playwright.dev/docs/api/class-testoptions.
    */
   use: {
-    baseURL: 'https://api.staging.projects.chittyinsights.com/mealplanner/',
+    baseURL: `${process.env.PLAYWRIGHT_BASE_URL}`,
     extraHTTPHeaders: {
       'Accept': 'application/json',
       // 'Authorization': `token ${process.env.API_TOKEN}`,

@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { ProjectEnvironment, sharedEnvironment } from './pipeline';
-import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
+import { HostedZone, HostedZoneAttributes, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { HostedZoneDelegate } from './constructs/delegate-wrapper';
 
 export interface SharedLayerStackProps extends StackProps {
@@ -12,8 +12,7 @@ export interface SharedLayerStackProps extends StackProps {
   * Stack of constructs made in the shared account but need to match state with other accounts.
   */
 export default class SharedLayerStack extends Stack {
-  public readonly hostedZone: IHostedZone;
-  public readonly hostedZoneDelegate: HostedZoneDelegate;
+  readonly projectEnvironment: ProjectEnvironment;
 
   /**
     * Builds the stack with necessary resources and IAM roles.
@@ -24,19 +23,41 @@ export default class SharedLayerStack extends Stack {
   constructor(scope: Construct, id: string, props: SharedLayerStackProps) {
     super(scope, id, { env: sharedEnvironment, ...props });
 
-    this.hostedZone = HostedZone.fromHostedZoneId(
+    this.projectEnvironment = props.projectEnvironment;
+  }
+
+  /**
+    * Adds delegate role to given zone.
+    *
+    * @param{string} id The id for this resource
+    * @param{HostedZoneAttributes} hostedZoneAttrs Attributes for lookup of hosted zone
+    * @param{string} domain The domain that is being delegated to the parent
+    *
+    * @return{{hostedZone: IHostedZone, delegate: HostedZoneDelegate}} A composite object of the
+    * parent zone and zone delegate wrapper.
+    */
+  readonly addDelegate = (id: string, hostedZoneAttrs: HostedZoneAttributes, domain?: string):
+    { hostedZone: IHostedZone, delegate: HostedZoneDelegate } => {
+    const hostedZone = HostedZone.fromHostedZoneAttributes(
         this,
-        'ChittyInsightsHostedZone',
-        'Z0712659E60WG40V5EW7',
+        id,
+        hostedZoneAttrs,
     );
 
-    this.hostedZoneDelegate = new HostedZoneDelegate(
+    const delegate = new HostedZoneDelegate(
         this,
-        `${props.projectEnvironment.name}HostedZoneDelegate`,
+        `${this.projectEnvironment.name}${id}Delegate`,
         {
-          hostedZoneArn: this.hostedZone.hostedZoneArn,
-          projectEnvironment: props.projectEnvironment,
+          hostedZoneArn: hostedZone.hostedZoneArn,
+          projectEnvironment: this.projectEnvironment,
+          domain,
         });
-    this.hostedZone.grantDelegation(this.hostedZoneDelegate.delegationRole);
-  }
+
+    hostedZone.grantDelegation(delegate.delegationRole);
+
+    return {
+      hostedZone,
+      delegate,
+    };
+  };
 }

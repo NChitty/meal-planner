@@ -25,12 +25,27 @@ export default class MealPlannerStage extends Stage {
     const sharedLayer = new SharedLayerStack(this, 'SharedLayer', {
       projectEnvironment: props.env,
     });
+
+    sharedLayer.addDelegate('ChittyInsightsComHostedZone', {
+      zoneName: 'chittyinsights.com',
+      hostedZoneId: 'Z0712659E60WG40V5EW7',
+    });
+
+    const { hostedZone, delegate } = sharedLayer.addDelegate(
+        'ChittyInsightsDevHostedZone',
+        {
+          zoneName: 'chittyinsights.dev',
+          hostedZoneId: 'Z05171022TE0L7DEAZTUK',
+        },
+        'mealplanner.chittyinsights.dev',
+    );
+
     const persistanceLayer = new PersistenceLayerStack(this, 'PersistenceLayer');
     new ApplicationLayerStack(this, 'ApplicationLayer', {
-      delegationRole: sharedLayer.hostedZoneDelegate.delegationRole,
+      delegationRole: delegate.delegationRole,
       recipeTable: persistanceLayer.recipeTable,
-      domain: sharedLayer.hostedZoneDelegate.normalizedDomain,
-      parentHostedZoneId: sharedLayer.hostedZone.hostedZoneId,
+      domain: delegate.normalizedDomain,
+      parentHostedZoneId: hostedZone.hostedZoneId,
     });
   }
 }

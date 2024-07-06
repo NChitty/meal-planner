@@ -10,6 +10,11 @@ import { ProjectEnvironment } from '../pipeline';
 
 export interface HostedZoneDelegateProps {
   /**
+    * The parent domain that the subdomain will be added to.
+    */
+  readonly domain?: string;
+
+  /**
     * The parent hosted zone arn.
     */
   readonly hostedZoneArn: string;
@@ -26,7 +31,6 @@ export interface HostedZoneDelegateProps {
   */
 export class HostedZoneDelegate extends Construct {
   readonly defaultAccount: string = '211125587522';
-  readonly defaultDomain: string = 'projects.chittyinsights.com';
 
   public readonly delegationRole: Role;
   public readonly normalizedDomain: string;
@@ -40,9 +44,12 @@ export class HostedZoneDelegate extends Construct {
     */
   constructor(scope: Construct, id: string, props: HostedZoneDelegateProps) {
     super(scope, id);
-    this.normalizedDomain = this.normalizeRecordName(props.projectEnvironment.subdomain);
-    this.delegationRole = new Role(this, 'CrossAccountRole', {
-      roleName: `${props.projectEnvironment.name}HostedZoneDelegationRole`,
+    this.normalizedDomain = this.normalizeRecordName(
+        props.projectEnvironment.subdomain,
+        props.domain,
+    );
+    this.delegationRole = new Role(scope, `${id}CrossAccountRole`, {
+      roleName: `${id}Role`,
       assumedBy: new AccountPrincipal(`${props.projectEnvironment.account || this.defaultAccount}`),
       inlinePolicies: {
         crossAccountPolicy: new PolicyDocument({
@@ -73,12 +80,14 @@ export class HostedZoneDelegate extends Construct {
   /**
     * Builds the normalized record name based on logic.
     * @param{string | undefined} subdomain the subdomain to allow editting for
+    * @param{string | undefined} domain the parent hosted zone name
     * @return{string} The normalized domain name for future records
     */
-  readonly normalizeRecordName = (subdomain?: string): string => {
+  readonly normalizeRecordName = (subdomain?: string, domain?: string): string => {
+    domain = domain ?? 'projects.chittyinsights.com';
     if (!subdomain) {
-      return this.defaultDomain;
+      return domain;
     }
-    return subdomain.concat('.', this.defaultDomain);
+    return subdomain.concat('.', domain);
   };
 }

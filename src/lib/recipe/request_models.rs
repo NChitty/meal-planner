@@ -21,9 +21,8 @@ where
 
 #[cfg(test)]
 mod test {
-    use crate::recipe::request_models::PatchRecipe;
-
     use super::PostRecipe;
+    use crate::recipe::request_models::PatchRecipe;
 
     const JSON: &str = r#"{
         "name": "Basic Recipe"
@@ -59,9 +58,7 @@ mod test {
     #[test]
     fn deserialize_patch_recipe_request_none() {
         let actual: PatchRecipe = serde_json::from_str("{}").unwrap();
-        let expected = PatchRecipe {
-            name: None,
-        };
+        let expected = PatchRecipe { name: None };
 
         assert_eq!(expected, actual);
     }
@@ -69,9 +66,7 @@ mod test {
     #[test]
     fn deserialize_patch_recipe_request_none_empty() {
         let actual: PatchRecipe = serde_json::from_str("{\"name\": \"\"}").unwrap();
-        let expected = PatchRecipe {
-            name: None,
-        };
+        let expected = PatchRecipe { name: None };
 
         assert_eq!(expected, actual);
     }

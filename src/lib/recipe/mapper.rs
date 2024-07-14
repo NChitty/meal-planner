@@ -68,9 +68,7 @@ mod test {
 
     #[test]
     fn update_from_request_none() {
-        let update_request = PatchRecipe {
-            name: None,
-        };
+        let update_request = PatchRecipe { name: None };
 
         let mut recipe = Recipe {
             id: ID,
@@ -82,7 +80,8 @@ mod test {
         assert_eq!(
             Recipe {
                 id: ID,
-                name: NAME.to_owned() },
+                name: NAME.to_owned()
+            },
             recipe
         );
     }

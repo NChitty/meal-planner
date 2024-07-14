@@ -3,7 +3,7 @@ use axum::http::StatusCode;
 use axum::Json;
 use uuid::Uuid;
 
-use crate::recipe::request_models::{PostRecipe, PatchRecipe};
+use crate::recipe::request_models::{PatchRecipe, PostRecipe};
 use crate::recipe::{mapper, Recipe};
 use crate::services::ApplicationContext;
 use crate::Repository;

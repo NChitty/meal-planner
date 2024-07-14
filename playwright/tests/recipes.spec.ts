@@ -66,7 +66,7 @@ test.describe('Happy Path', () => {
     });
   });
 
-  test('Delete Recipe', async ({ request }) => {
+  test.afterAll('Delete Recipe', async ({ request }) => {
     const response = await request.delete(`./recipes/${recipeUuid}`);
 
     expect(response.status()).toEqual(204);

@@ -3,8 +3,8 @@ use axum::http::StatusCode;
 use axum::Json;
 use uuid::Uuid;
 
-use crate::recipe::request_models::{CreateRecipe, PatchRecipe};
-use crate::recipe::Recipe;
+use crate::recipe::request_models::{PostRecipe, PatchRecipe};
+use crate::recipe::{mapper, Recipe};
 use crate::services::ApplicationContext;
 use crate::Repository;
 
@@ -16,12 +16,12 @@ use crate::Repository;
 /// wrapped in an error.
 pub async fn create<T>(
     State(state): State<ApplicationContext<T>>,
-    Json(payload): Json<CreateRecipe>,
+    Json(payload): Json<PostRecipe>,
 ) -> Result<Json<Recipe>, StatusCode>
 where
     T: Repository<Recipe>,
 {
-    let recipe = Recipe::create_new(Uuid::new_v4(), &payload);
+    let recipe = mapper::to_recipe(Uuid::new_v4(), &payload);
     state.repo.save(&recipe).await?;
 
     Ok(Json(recipe))

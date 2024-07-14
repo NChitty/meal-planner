@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
-pub struct CreateRecipe {
+pub struct PostRecipe {
     pub(super) name: String,
 }
 
@@ -12,7 +12,7 @@ pub struct PatchRecipe {
 
 #[cfg(test)]
 mod test {
-    use super::CreateRecipe;
+    use super::PostRecipe;
 
     const JSON: &str = r#"{
         "name": "Basic Recipe"
@@ -22,8 +22,8 @@ mod test {
 
     #[test]
     fn deserialize_create_recipe_request() {
-        let actual: CreateRecipe = serde_json::from_str(JSON).unwrap();
-        let expected = CreateRecipe {
+        let actual: PostRecipe = serde_json::from_str(JSON).unwrap();
+        let expected = PostRecipe {
             name: NAME.to_owned(),
         };
 

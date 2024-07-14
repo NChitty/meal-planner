@@ -84,3 +84,72 @@ where
 
     Ok(StatusCode::NO_CONTENT)
 }
+
+#[cfg(test)]
+mod test {
+    use axum::extract::{Path, State};
+    use axum::http::StatusCode;
+    use axum::Json;
+    use mockall::predicate::{eq, function};
+    use uuid::Uuid;
+
+    use crate::recipe::request_models::PostRecipe;
+    use crate::recipe::Recipe;
+    use crate::services::{self, ApplicationContext};
+    use crate::MockRepository;
+
+    #[tokio::test]
+    async fn create_ok() {
+        let mut mock_repo: MockRepository<Recipe> = MockRepository::new();
+        mock_repo
+            .expect_save()
+            .with(function(|recipe: &Recipe| recipe.name.eq("Name")))
+            .return_once(|_| Box::pin(async { Ok(()) }));
+        let state = State(ApplicationContext::<MockRepository<Recipe>> { repo: mock_repo });
+        let payload = Json(PostRecipe::default());
+
+        let actual = services::recipes::create(state, payload).await;
+
+        assert!(actual.is_ok());
+    }
+
+    #[tokio::test]
+    async fn create_error() {
+        let mut mock_repo: MockRepository<Recipe> = MockRepository::new();
+        mock_repo
+            .expect_save()
+            .with(function(|recipe: &Recipe| recipe.name.eq("Name")))
+            .return_once(|_| Box::pin(async { Err(StatusCode::INTERNAL_SERVER_ERROR) }));
+        let state = State(ApplicationContext::<MockRepository<Recipe>> { repo: mock_repo });
+        let payload = Json(PostRecipe::default());
+
+        let actual = services::recipes::create(state, payload).await;
+
+        assert!(actual.is_err());
+        assert_eq!(actual.err().unwrap(), StatusCode::INTERNAL_SERVER_ERROR);
+    }
+
+    #[tokio::test]
+    async fn read_one_ok() {
+        let mut mock_repo: MockRepository<Recipe> = MockRepository::new();
+        let expected = Recipe {
+            id: Uuid::nil(),
+            name: "Name".to_owned(),
+        };
+        let clone = expected.clone();
+        mock_repo
+            .expect_find_by_id()
+            .with(eq(Uuid::nil()))
+            .return_once(move |_| Box::pin(async move { Ok(clone) }));
+        let state = State(ApplicationContext::<MockRepository<Recipe>> { repo: mock_repo });
+
+        let actual = services::recipes::read_one(state, Path(Uuid::nil())).await;
+
+        match actual {
+            Ok(Json(returned_recipe)) => {
+                assert_eq!(returned_recipe, expected);
+            }
+            _ => panic!("Expected Ok(Json(recipe)), got {:?}", actual),
+        }
+    }
+}

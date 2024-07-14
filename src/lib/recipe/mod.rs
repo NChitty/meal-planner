@@ -5,10 +5,10 @@ pub mod mapper;
 pub mod repository;
 pub mod request_models;
 
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Recipe {
-    id: Uuid,
-    name: String,
+    pub(crate) id: Uuid,
+    pub(crate) name: String,
 }
 
 impl Default for Recipe {

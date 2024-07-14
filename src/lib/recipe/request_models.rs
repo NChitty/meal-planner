@@ -5,6 +5,14 @@ pub struct PostRecipe {
     pub(super) name: String,
 }
 
+impl Default for PostRecipe {
+    fn default() -> Self {
+        Self {
+            name: "Name".to_owned(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct PatchRecipe {
     #[serde(default, deserialize_with = "deserialize_option_string")]

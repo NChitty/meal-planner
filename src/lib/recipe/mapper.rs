@@ -3,6 +3,7 @@ use uuid::Uuid;
 use super::request_models::{PatchRecipe, PostRecipe};
 use super::Recipe;
 
+#[must_use]
 pub fn to_recipe(id: Uuid, value: &PostRecipe) -> Recipe {
     Recipe {
         id,

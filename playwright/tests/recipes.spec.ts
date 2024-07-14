@@ -1,8 +1,13 @@
 import { test, expect } from '@playwright/test';
 
-const data = {
+const createData = {
   name: 'Playwright Recipe',
 };
+
+const updateData = {
+  name: 'Updated Playwright Recipe',
+};
+
 const NIL_UUID = '00000000-0000-0000-0000-000000000000';
 
 let recipeUuid: string;
@@ -16,7 +21,7 @@ test('pingable', async ({ request }) => {
 
 test.describe('Happy Path', () => {
   test.beforeAll('Create Recipe', async ({ request }) => {
-    const response = await request.post('./recipes', { data });
+    const response = await request.post('./recipes', { data: createData });
 
     expect(response.ok()).toBeTruthy();
 
@@ -24,7 +29,7 @@ test.describe('Happy Path', () => {
     expect(responseBody).toEqual({
       // eslint-disable-next-line max-len
       id: expect.stringMatching(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/),
-      ...data,
+      ...createData,
     });
     recipeUuid = responseBody.id;
   });
@@ -35,7 +40,17 @@ test.describe('Happy Path', () => {
     expect(response.ok()).toBeTruthy();
     expect(await response.json()).toEqual({
       id: recipeUuid,
-      ...data,
+      ...createData,
+    });
+  });
+
+  test('Update Recipe', async ({ request }) => {
+    const response = await request.patch(`./recipes/${recipeUuid}`, { data: updateData });
+
+    expect(response.ok()).toBeTruthy();
+    expect(await response.json()).toEqual({
+      id: recipeUuid,
+      ...updateData,
     });
   });
 
@@ -48,6 +63,12 @@ test.describe('Happy Path', () => {
 
 test('Read Non-existent Recipe', async ({ request }) => {
   const response = await request.get(`./recipes/${NIL_UUID}`);
+
+  expect(response.status()).toEqual(404);
+});
+
+test('Update Non-existent Recipe', async ({ request }) => {
+  const response = await request.patch(`./recipes/${NIL_UUID}`, { data: updateData });
 
   expect(response.status()).toEqual(404);
 });

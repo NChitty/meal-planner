@@ -20,7 +20,9 @@ test('pingable', async ({ request }) => {
 });
 
 test.describe('Happy Path', () => {
-  test.beforeAll('Create Recipe', async ({ request }) => {
+  test.describe.configure({ mode: 'serial' });
+
+  test('Create Recipe', async ({ request }) => {
     const response = await request.post('./recipes', { data: createData });
 
     expect(response.ok()).toBeTruthy();
@@ -64,7 +66,7 @@ test.describe('Happy Path', () => {
     });
   });
 
-  test.afterAll('Delete Recipe', async ({ request }) => {
+  test('Delete Recipe', async ({ request }) => {
     const response = await request.delete(`./recipes/${recipeUuid}`);
 
     expect(response.status()).toEqual(204);

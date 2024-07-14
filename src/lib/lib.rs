@@ -1,6 +1,7 @@
 use std::future::Future;
 
-use axum::{async_trait, http::StatusCode};
+use axum::async_trait;
+use axum::http::StatusCode;
 use uuid::Uuid;
 
 pub mod aws_client;

@@ -148,7 +148,7 @@ mod test {
         match actual {
             Ok(Json(returned_recipe)) => {
                 assert_eq!(returned_recipe, expected);
-            }
+            },
             _ => panic!("Expected Ok(Json(recipe)), got {:?}", actual),
         }
     }

@@ -54,6 +54,16 @@ test.describe('Happy Path', () => {
     });
   });
 
+  test('Read Updated Recipe', async ({ request }) => {
+    const response = await request.get(`./recipes/${recipeUuid}`);
+
+    expect(response.ok()).toBeTruthy();
+    expect(await response.json()).toEqual({
+      id: recipeUuid,
+      ...updateData,
+    });
+  });
+
   test.afterAll('Delete Recipe', async ({ request }) => {
     const response = await request.delete(`./recipes/${recipeUuid}`);
 

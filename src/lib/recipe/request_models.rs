@@ -5,6 +5,11 @@ pub struct CreateRecipe {
     pub(super) name: String,
 }
 
+#[derive(Debug, Deserialize, PartialEq)]
+pub struct PatchRecipe {
+    pub(crate) name: String,
+}
+
 #[cfg(test)]
 mod test {
     use super::CreateRecipe;

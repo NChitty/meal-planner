@@ -9,7 +9,7 @@ pub mod request_models;
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct Recipe {
     id: Uuid,
-    name: String,
+    pub(crate) name: String,
 }
 
 impl Recipe {

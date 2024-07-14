@@ -3,7 +3,7 @@ use axum::http::StatusCode;
 use axum::Json;
 use uuid::Uuid;
 
-use crate::recipe::request_models::CreateRecipe;
+use crate::recipe::request_models::{CreateRecipe, PatchRecipe};
 use crate::recipe::Recipe;
 use crate::services::ApplicationContext;
 use crate::Repository;
@@ -41,6 +41,28 @@ where
     T: Repository<Recipe>,
 {
     let recipe = state.repo.find_by_id(id).await?;
+
+    Ok(Json(recipe))
+}
+
+/// Attempts to update a recipe in the database given the uuid.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
+pub async fn update<T>(
+    State(state): State<ApplicationContext<T>>,
+    Path(id): Path<Uuid>,
+    Json(payload): Json<PatchRecipe>,
+) -> Result<Json<Recipe>, StatusCode>
+where
+    T: Repository<Recipe>,
+{
+    let mut recipe = state.repo.find_by_id(id).await?;
+    recipe.name = payload.name;
+
+    state.repo.save(&recipe).await?;
 
     Ok(Json(recipe))
 }

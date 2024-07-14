@@ -8,24 +8,6 @@ use crate::recipe::Recipe;
 use crate::services::ApplicationContext;
 use crate::Repository;
 
-/// Attempts to find a recipe in the database given the uuid.
-///
-/// # Errors
-///
-/// This function converts the result of the database operation to a status code
-/// wrapped in an error.
-pub async fn read_one<T>(
-    State(state): State<ApplicationContext<T>>,
-    Path(id): Path<Uuid>,
-) -> Result<Json<Recipe>, StatusCode>
-where
-    T: Repository<Recipe>,
-{
-    let recipe = state.repo.find_by_id(id).await?;
-
-    Ok(Json(recipe))
-}
-
 /// Attempts to create a recipe in the database.
 ///
 /// # Errors
@@ -41,6 +23,24 @@ where
 {
     let recipe = Recipe::create_new(Uuid::new_v4(), &payload);
     state.repo.save(&recipe).await?;
+
+    Ok(Json(recipe))
+}
+
+/// Attempts to find a recipe in the database given the uuid.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
+pub async fn read_one<T>(
+    State(state): State<ApplicationContext<T>>,
+    Path(id): Path<Uuid>,
+) -> Result<Json<Recipe>, StatusCode>
+where
+    T: Repository<Recipe>,
+{
+    let recipe = state.repo.find_by_id(id).await?;
 
     Ok(Json(recipe))
 }

@@ -1,5 +1,5 @@
 use aws_config::BehaviorVersion;
-use axum::routing::{delete, get, post};
+use axum::routing::{delete, get, patch, post};
 use axum::Router;
 use meal_planner::recipe::repository::DynamoDbRecipe;
 use meal_planner::services::{recipes, ApplicationContext};
@@ -19,6 +19,7 @@ pub async fn recipes() -> Router {
     Router::new()
         .route("/", post(recipes::create::<DynamoDbRecipe>))
         .route("/:id", get(recipes::read_one::<DynamoDbRecipe>))
+        .route("/:id", patch(recipes::update::<DynamoDbRecipe>))
         .route("/:id", delete(recipes::delete_one::<DynamoDbRecipe>))
         .with_state(recipe_context)
 }

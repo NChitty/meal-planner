@@ -60,7 +60,7 @@ where
     T: Repository<Recipe>,
 {
     let mut recipe = state.repo.find_by_id(id).await?;
-    recipe.name = payload.name;
+    mapper::update_recipe(&mut recipe, &payload);
 
     state.repo.save(&recipe).await?;
 

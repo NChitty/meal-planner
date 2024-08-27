@@ -38,6 +38,23 @@ impl DynamoDbRecipe {
 }
 
 impl Repository<Recipe> for DynamoDbRecipe {
+    async fn get_all(&self) -> Result<Vec<Recipe>, StatusCode> {
+        let scan_result = self
+            .client
+            .scan(&self.table_name)
+            .await
+            .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+        let items: Vec<Recipe> = scan_result
+            .items()
+            .iter()
+            .map(|item| from_item(item.clone()))
+            .flatten()
+            .collect();
+
+        Ok(items)
+    }
+
     async fn find_by_id(&self, id: Uuid) -> Result<Recipe, StatusCode> {
         let get_item_result = self
             .client
@@ -99,6 +116,7 @@ mod test {
     use aws_sdk_dynamodb::operation::delete_item::DeleteItemOutput;
     use aws_sdk_dynamodb::operation::get_item::GetItemOutput;
     use aws_sdk_dynamodb::operation::put_item::{PutItemError, PutItemOutput};
+    use aws_sdk_dynamodb::operation::scan::ScanOutput;
     use aws_sdk_dynamodb::types::error::{
         ConditionalCheckFailedException,
         ResourceNotFoundException,
@@ -246,5 +264,23 @@ mod test {
             StatusCode::NOT_FOUND => true,
             _ => false,
         }))
+    }
+
+    #[tokio::test]
+    async fn test_scan() {
+        let mut mock = DynamoDbClient::default();
+        let recipe = Recipe {
+            id: Uuid::nil(),
+            name: "Name".to_owned(),
+        };
+        let item = to_item(&recipe).unwrap();
+        mock.expect_scan()
+            .with(eq("recipes"))
+            .return_once(move |_| Ok(ScanOutput::builder().items(item).build()));
+
+        let repo = DynamoDbRecipe::mock(Arc::new(mock), "recipes");
+
+        let result = repo.get_all().await;
+        assert!(result.is_ok_and(|collection| collection.contains(&recipe) && collection.len() == 1))
     }
 }

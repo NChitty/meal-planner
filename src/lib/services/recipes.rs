@@ -8,6 +8,23 @@ use crate::recipe::{mapper, Recipe};
 use crate::services::ApplicationContext;
 use crate::Repository;
 
+/// Lists all recipes from the database.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
+pub async fn list<T>(
+    State(state): State<ApplicationContext<T>>,
+) -> Result<Json<Vec<Recipe>>, StatusCode>
+where
+    T: Repository<Recipe>,
+{
+    let recipes = state.repo.get_all().await?;
+
+    Ok(Json(recipes))
+}
+
 /// Attempts to create a recipe in the database.
 ///
 /// # Errors

@@ -5,6 +5,7 @@ use aws_sdk_dynamodb::error::SdkError;
 use aws_sdk_dynamodb::operation::delete_item::{DeleteItemError, DeleteItemOutput};
 use aws_sdk_dynamodb::operation::get_item::{GetItemError, GetItemOutput};
 use aws_sdk_dynamodb::operation::put_item::{PutItemError, PutItemOutput};
+use aws_sdk_dynamodb::operation::scan::{ScanError, ScanOutput};
 use aws_sdk_dynamodb::types::AttributeValue;
 use aws_sdk_dynamodb::Client;
 use axum::async_trait;
@@ -17,6 +18,7 @@ pub trait DynamoDbClient: Send + Sync {
         table_name: &str,
         key: HashMap<String, AttributeValue>,
     ) -> Result<GetItemOutput, GetItemError>;
+
     async fn put_item(
         &self,
         table_name: &str,
@@ -28,6 +30,8 @@ pub trait DynamoDbClient: Send + Sync {
         table_name: &str,
         key: HashMap<String, AttributeValue>,
     ) -> Result<DeleteItemOutput, DeleteItemError>;
+
+    async fn scan(&self, table_name: &str) -> Result<ScanOutput, ScanError>;
 }
 
 #[derive(Clone)]
@@ -78,6 +82,15 @@ impl DynamoDbClient for DynamoDbClientImpl {
             .table_name(table_name)
             .set_key(Some(key))
             .condition_expression("attribute_exists(id)")
+            .send()
+            .await
+            .map_err(SdkError::into_service_error)
+    }
+
+    async fn scan(&self, table_name: &str) -> Result<ScanOutput, ScanError> {
+        self.0
+            .scan()
+            .table_name(table_name)
             .send()
             .await
             .map_err(SdkError::into_service_error)

@@ -17,6 +17,7 @@ pub async fn recipes() -> Router {
     let recipe_context = ApplicationContext { repo };
 
     Router::new()
+        .route("/", get(recipes::list::<DynamoDbRecipe>))
         .route("/", post(recipes::create::<DynamoDbRecipe>))
         .route("/:id", get(recipes::read_one::<DynamoDbRecipe>))
         .route("/:id", patch(recipes::update::<DynamoDbRecipe>))

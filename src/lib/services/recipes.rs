@@ -8,6 +8,17 @@ use crate::recipe::{mapper, Recipe};
 use crate::services::ApplicationContext;
 use crate::Repository;
 
+pub async fn list<T>(
+    State(state): State<ApplicationContext<T>>,
+) -> Result<Json<Vec<Recipe>>, StatusCode>
+where
+    T: Repository<Recipe>,
+{
+    let recipes = state.repo.get_all().await?;
+
+    Ok(Json(recipes))
+}
+
 /// Attempts to create a recipe in the database.
 ///
 /// # Errors

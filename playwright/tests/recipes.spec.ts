@@ -46,6 +46,17 @@ test.describe('Happy Path', () => {
     });
   });
 
+  test('List Recipes', async ({ request }) => {
+    const response = await request.get('./recipes');
+
+    expect(response.ok()).toBeTruthy();
+    const json = await response.json();
+    expect(json).toContainEqual({
+      id: recipeUuid,
+      ...createData,
+    });
+  });
+
   test('Update Recipe', async ({ request }) => {
     const response = await request.patch(`./recipes/${recipeUuid}`, { data: updateData });
 

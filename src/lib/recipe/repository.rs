@@ -49,8 +49,7 @@ impl Repository<Recipe> for DynamoDbRecipe {
             .items()
             .iter()
             .map(|item| from_item(item.clone()))
-            .filter(Result::is_ok)
-            .map(Result::unwrap)
+            .flatten()
             .collect();
 
         Ok(items)

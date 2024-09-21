@@ -3,7 +3,7 @@ use axum::http::StatusCode;
 use axum::Json;
 use uuid::Uuid;
 
-use crate::recipe::request_models::{PatchRecipe, PostRecipe};
+use crate::recipe::request_models::{PatchRecipe, PostRecipe, PutRecipe};
 use crate::recipe::{mapper, Recipe};
 use crate::services::ApplicationContext;
 use crate::Repository;
@@ -31,17 +31,40 @@ where
 ///
 /// This function converts the result of the database operation to a status code
 /// wrapped in an error.
-pub async fn create<T>(
+pub async fn write<T>(
     State(state): State<ApplicationContext<T>>,
-    Json(payload): Json<PostRecipe>,
-) -> Result<Json<Recipe>, StatusCode>
+    Json(payload): Json<PutRecipe>,
+) -> Result<(StatusCode, Json<Recipe>), StatusCode>
 where
     T: Repository<Recipe>,
 {
-    let recipe = mapper::to_recipe(Uuid::new_v4(), &payload);
+    let recipe = mapper::map_put_recipe(&payload);
+
+    let save_result: Option<Recipe> = state.repo.save(&recipe).await?;
+
+    match save_result {
+        Some(_) => Ok((StatusCode::OK, Json(recipe))),
+        None => Ok((StatusCode::CREATED, Json(recipe))),
+    }
+}
+
+/// Attempts to create a recipe in the database.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
+pub async fn create<T>(
+    State(state): State<ApplicationContext<T>>,
+    Json(payload): Json<PostRecipe>,
+) -> Result<(StatusCode, Json<Recipe>), StatusCode>
+where
+    T: Repository<Recipe>,
+{
+    let recipe = mapper::map_post_recipe(Uuid::new_v4(), &payload);
     state.repo.save(&recipe).await?;
 
-    Ok(Json(recipe))
+    Ok((StatusCode::CREATED, Json(recipe)))
 }
 
 /// Attempts to find a recipe in the database given the uuid.
@@ -121,7 +144,7 @@ mod test {
         mock_repo
             .expect_save()
             .with(function(|recipe: &Recipe| recipe.name.eq("Name")))
-            .return_once(|_| Box::pin(async { Ok(()) }));
+            .return_once(|_| Box::pin(async { Ok(None) }));
         let state = State(ApplicationContext::<MockRepository<Recipe>> { repo: mock_repo });
         let payload = Json(PostRecipe::default());
 

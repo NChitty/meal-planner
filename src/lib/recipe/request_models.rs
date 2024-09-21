@@ -1,4 +1,5 @@
 use serde::{Deserialize, Deserializer};
+use uuid::Uuid;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct PostRecipe {
@@ -25,6 +26,12 @@ where
 {
     let option: Option<String> = Option::deserialize(deserializer)?;
     Ok(option.filter(|s| !s.is_empty()))
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
+pub struct PutRecipe {
+    pub(super) id: Uuid,
+    pub(super) name: String,
 }
 
 #[cfg(test)]

@@ -25,7 +25,21 @@ test.describe('Happy Path', () => {
   test('Create Recipe', async ({ request }) => {
     const response = await request.post('./recipes', { data: createData });
 
-    expect(response.ok()).toBeTruthy();
+    expect(response.status()).toBe(201);
+
+    const responseBody = await response.json();
+    expect(responseBody).toEqual({
+      // eslint-disable-next-line max-len
+      id: expect.stringMatching(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/),
+      ...createData,
+    });
+    recipeUuid = responseBody.id;
+  });
+
+  test('Put Recipe', async ({ request }) => {
+    const response = await request.put('./recipes', { data: { id: recipeUuid, ...createData } });
+
+    expect(response.status()).toBe(200);
 
     const responseBody = await response.json();
     expect(responseBody).toEqual({

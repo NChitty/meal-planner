@@ -6,7 +6,7 @@ use aws_sdk_dynamodb::operation::delete_item::{DeleteItemError, DeleteItemOutput
 use aws_sdk_dynamodb::operation::get_item::{GetItemError, GetItemOutput};
 use aws_sdk_dynamodb::operation::put_item::{PutItemError, PutItemOutput};
 use aws_sdk_dynamodb::operation::scan::{ScanError, ScanOutput};
-use aws_sdk_dynamodb::types::AttributeValue;
+use aws_sdk_dynamodb::types::{AttributeValue, ReturnValue};
 use aws_sdk_dynamodb::Client;
 use axum::async_trait;
 
@@ -67,6 +67,7 @@ impl DynamoDbClient for DynamoDbClientImpl {
             .put_item()
             .table_name(table_name)
             .set_item(Some(item))
+            .return_values(ReturnValue::AllOld)
             .send()
             .await
             .map_err(SdkError::into_service_error)

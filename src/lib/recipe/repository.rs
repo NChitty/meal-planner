@@ -74,14 +74,18 @@ impl Repository<Recipe> for DynamoDbRecipe {
         Ok(recipe)
     }
 
-    async fn save(&self, recipe: &Recipe) -> Result<(), StatusCode> {
+    async fn save(&self, recipe: &Recipe) -> Result<Option<Recipe>, StatusCode> {
         let item = to_item(recipe).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-        self.client
+        let output = self
+            .client
             .put_item(&self.table_name, item)
             .await
             .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        Ok(())
+        return match output.attributes {
+            Some(item) => from_item(item).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR),
+            None => Ok(None),
+        }
     }
 
     async fn delete_by_id(&self, id: Uuid) -> Result<(), StatusCode> {

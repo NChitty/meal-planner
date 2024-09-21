@@ -37,7 +37,7 @@ where
     let save_result: Option<Recipe> = state.repo.save(&recipe).await?;
 
     return match save_result {
-        Some(recipe) => Ok((StatusCode::OK, Json(recipe))),
+        Some(_) => Ok((StatusCode::OK, Json(recipe))),
         None => Ok((StatusCode::CREATED, Json(recipe))),
     }
 }

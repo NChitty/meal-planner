@@ -25,7 +25,6 @@ where
     Ok(Json(recipes))
 }
 
-
 /// Attempts to create a recipe in the database.
 ///
 /// # Errors

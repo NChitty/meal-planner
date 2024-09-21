@@ -1,7 +1,26 @@
 import { test, expect } from '@playwright/test';
-import { updateData } from './recipeConstants';
+import { NIL_UUID, updateData } from './recipeConstants';
 
-const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+test('Create Invalid Recipe', async ({ request }) => {
+  const response = await request.put(`./recipes`, {
+    data: {
+      id: 'this-is-not-a-uuid',
+      name: '',
+    },
+  });
+
+  expect(response.status()).toEqual(422);
+});
+
+test('Create Recipe w/ Null Name', async ({ request }) => {
+  const response = await request.put(`./recipes`, {
+    data: {
+      id: NIL_UUID,
+    },
+  });
+
+  expect(response.status()).toEqual(422);
+});
 
 test('Read Non-existent Recipe', async ({ request }) => {
   const response = await request.get(`./recipes/${NIL_UUID}`);

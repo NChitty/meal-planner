@@ -5,6 +5,8 @@ import { defineConfig } from '@playwright/test';
  * https://github.com/motdotla/dotenv
  */
 // require('dotenv').config();
+const baseUrl = process.env.PLAYWRIGHT_BASE_URL ??
+  'https://api.sandbox.mealplanner.chittyinsights.dev';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -25,7 +27,7 @@ export default defineConfig({
    * See https://playwright.dev/docs/api/class-testoptions.
    */
   use: {
-    baseURL: `${process.env.PLAYWRIGHT_BASE_URL}`,
+    baseURL: `${baseUrl}`,
     extraHTTPHeaders: {
       'Accept': 'application/json',
       // 'Authorization': `token ${process.env.API_TOKEN}`,

@@ -11,9 +11,10 @@ pub fn map_post_recipe(id: Uuid, value: &PostRecipe) -> Recipe {
     }
 }
 
+#[must_use]
 pub fn map_put_recipe(value: &PutRecipe) -> Recipe {
     Recipe {
-        id: value.id.clone(),
+        id: value.id,
         name: value.name.clone(),
     }
 }

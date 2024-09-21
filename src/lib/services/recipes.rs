@@ -25,6 +25,13 @@ where
     Ok(Json(recipes))
 }
 
+
+/// Attempts to create a recipe in the database.
+///
+/// # Errors
+///
+/// This function converts the result of the database operation to a status code
+/// wrapped in an error.
 pub async fn write<T>(
     State(state): State<ApplicationContext<T>>,
     Json(payload): Json<PutRecipe>,
@@ -36,7 +43,7 @@ where
 
     let save_result: Option<Recipe> = state.repo.save(&recipe).await?;
 
-    return match save_result {
+    match save_result {
         Some(_) => Ok((StatusCode::OK, Json(recipe))),
         None => Ok((StatusCode::CREATED, Json(recipe))),
     }

@@ -48,8 +48,7 @@ impl Repository<Recipe> for DynamoDbRecipe {
         let items: Vec<Recipe> = scan_result
             .items()
             .iter()
-            .map(|item| from_item(item.clone()))
-            .flatten()
+            .flat_map(|item| from_item(item.clone()))
             .collect();
 
         Ok(items)
@@ -82,7 +81,7 @@ impl Repository<Recipe> for DynamoDbRecipe {
             .await
             .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        return match output.attributes {
+        match output.attributes {
             Some(item) => from_item(item).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR),
             None => Ok(None),
         }

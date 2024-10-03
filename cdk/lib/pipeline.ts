@@ -59,6 +59,7 @@ export default class PipelineStack extends Stack {
         /* eslint-enable max-len */
       }),
       commands: [
+        'cd cdk',
         'npm ci',
         'npm run build',
         'npx cdk synth',

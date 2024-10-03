@@ -2,14 +2,13 @@
   "name": "meal-planner",
   "version": "0.1.0",
   "bin": {
-    "meal-planner": "cdk/bin/meal-planner.ts"
+    "meal-planner": "bin/meal-planner.ts"
   },
   "scripts": {
     "build": "tsc",
     "cdk": "cdk",
     "sandbox": "cdk deploy --profile sandbox DevPersistenceLayerStack DevApplicationLayerStack",
     "lint": "eslint --fix .",
-    "playwright": "playwright test",
     "test": "jest",
     "watch": "tsc -w"
   },

@@ -82,8 +82,9 @@ export default class PipelineStack extends Stack {
     pipeline.addStage(stagingStage)
         .addPost(new ShellStep('Playwright E2E Test', {
           commands: [
+            'cd lambda/playwright',
             'npm ci',
-            'npx playwright test',
+            'npm run playwright',
           ],
           env: {
             PLAYWRIGHT_BASE_URL: 'https://api.staging.mealplanner.chittyinsights.dev/',

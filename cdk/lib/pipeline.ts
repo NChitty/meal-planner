@@ -64,7 +64,7 @@ export default class PipelineStack extends Stack {
         'npm run build',
         'npx cdk synth',
       ],
-      primaryOutputDirectory: path.join('.', 'cdk.out'),
+      primaryOutputDirectory: path.join('.', 'cdk/cdk.out'),
     });
 
     const pipeline = new CodePipeline(this, 'Pipeline', {

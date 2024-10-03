@@ -9,9 +9,6 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     name: "Rust Format"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./lambda
     permissions:
       pull-requests: write
     steps:
@@ -21,6 +18,7 @@ jobs:
           components: rustfmt
       - uses: mbrobbel/rustfmt-check@master
         with:
+          args: --manifest-path ./lambda/Cargo.toml
           token: ${{ secrets.GITHUB_TOKEN }}
           mode: review
 

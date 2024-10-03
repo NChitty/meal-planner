@@ -18,12 +18,16 @@ jobs:
           components: rustfmt
       - uses: mbrobbel/rustfmt-check@master
         with:
+          args: --manifest-path ./lambda/Cargo.toml
           token: ${{ secrets.GITHUB_TOKEN }}
           mode: review
 
   clippy:
     name: "Rust Lint"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./lambda
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
@@ -40,25 +44,27 @@ jobs:
   tests:
     name: "Rust Tests"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./lambda
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
+      - uses: dtolnay/rust-toolchain@nightly
       - name: Tests
         run: cargo test
 
   tsbuild:
     name: "CDK Build & Test"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./cdk
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-      - working-directory: ./cdk
-        run: |
+      - run: |
           npm ci
           npm run build
           npm test
@@ -72,7 +78,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: reviewdog/action-eslint@v1
+        name: Lint CDK
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           filter_mode: diff_context
+          workdir: ./cdk
+      - uses: reviewdog/action-eslint@v1
+        name: Lint Lambda Playwright
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          filter_mode: diff_context
+          workdir: ./lambda/playwright

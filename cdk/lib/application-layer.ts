@@ -43,7 +43,7 @@ export default class ApplicationLayerStack extends Stack {
 
     const handler = new RustFunction(this, 'RecipeFunction', {
       functionName: 'RecipeFunction',
-      manifestPath: join(__dirname, '..', '..', 'Cargo.toml'),
+      manifestPath: join(__dirname, '..', '..', 'lambda/Cargo.toml'),
       environment: {
         RECIPE_TABLE_NAME: props.recipeTable.tableName,
       },

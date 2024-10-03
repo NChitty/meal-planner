@@ -11,7 +11,7 @@ cdk.out
 .idea
 
 .env
-/test-results/
+*/test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
